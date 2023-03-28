@@ -5,6 +5,7 @@
 "Requested Process Identity not found.","Requested Process Identity not found."
 "Amasty Import","Amasty Import"
 Import,Import
+"The system process failed. For an error details please make sure that Debug mode is enabled and see %1","The system process failed. For an error details please make sure that Debug mode is enabled and see %1"
 "Process Started","Process Started"
 "File can not be saved to the destination folder.","File can not be saved to the destination folder."
 "Something went wrong. Please try again.","Something went wrong. Please try again."
@@ -14,6 +15,7 @@ Import,Import
 "The data is being mapped.","The data is being mapped."
 "Empty data batch has been read.","Empty data batch has been read."
 "The data is being read.","The data is being read."
+"There is entity identifier duplicated in the file.","There is entity identifier duplicated in the file."
 "The data is being validated.","The data is being validated."
 "Started importing ""%1"" with ""%2"" behavior.","Started importing ""%1"" with ""%2"" behavior."
 "The data has been imported.","The data has been imported."
@@ -160,6 +162,11 @@ Yes,Yes
 "The 'Multi-Process Import' feature needs the php extension 'pcntl' to be installed on the server. If you enable the feature and no performance boost happens, please ask your hoster/system administrator to check if the 'pcntl' extension installed.","The 'Multi-Process Import' feature needs the php extension 'pcntl' to be installed on the server. If you enable the feature and no performance boost happens, please ask your hoster/system administrator to check if the 'pcntl' extension installed."
 "Number of Parallels Processes","Number of Parallels Processes"
 "The more parallel processes are set, the faster is the import process, as well as the higher is the server load","The more parallel processes are set, the faster is the import process, as well as the higher is the server load"
+Advanced,Advanced
+"Enable Debug Mode","Enable Debug Mode"
+"Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log.","Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log."
+"Enable Import without Memory Limit","Enable Import without Memory Limit"
+"Enable this setting if import process terminates because of the memory limit exceed.","Enable this setting if import process terminates because of the memory limit exceed."
 "System Settings","System Settings"
 "CLI PHP Path","CLI PHP Path"
 "Current CLI PHP path of your Magento which is used by our extension when running the commands directly during the processing of PHP requests. To change it, please run bin/magento config:set amasty_base/system/cli_php_path %CLI_PHP_PATH% from the command line.","Current CLI PHP path of your Magento which is used by our extension when running the commands directly during the processing of PHP requests. To change it, please run bin/magento config:set amasty_base/system/cli_php_path %CLI_PHP_PATH% from the command line."

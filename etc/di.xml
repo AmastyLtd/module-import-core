@@ -447,4 +447,12 @@
             </argument>
         </arguments>
     </type>
+    <type name="Amasty\ImportCore\Import\DataHandling\FieldModifier\EavOptionLabel2OptionValue">
+        <arguments>
+            <argument name="allowedFrontendInput" xsi:type="array">
+                <item name="checkboxes" xsi:type="string">checkboxes</item>
+                <item name="multiselect" xsi:type="const">Magento\Ui\Component\Form\Element\MultiSelect::NAME</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

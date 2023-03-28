@@ -129,6 +129,8 @@ class Reader implements SourceReaderInterface
         foreach ($this->pathParts as $path) {
             if (isset($xmlData[$path])) {
                 $xmlData = $xmlData[$path];
+            } elseif (isset($xmlData['_value'][$path])) {
+                $xmlData = $xmlData['_value'][$path];
             } else {
                 throw new \RuntimeException(__('Wrong Item XPath.')->getText());
             }
@@ -204,8 +206,12 @@ class Reader implements SourceReaderInterface
 
     protected function initDocument()
     {
+        $pathParts = $this->pathParts;
+        unset($pathParts[0]);
+        $itemsXpath = implode('/', $pathParts);
+
         $this->document = new \SimpleXMLElement($this->xmlContent);
-        $this->generator = $this->fetchRecord(end($this->pathParts));
+        $this->generator = $this->fetchRecord($itemsXpath);
 
         if (!$this->generator->valid()) {
             throw new \RuntimeException('Wrong file content.');

@@ -85,7 +85,7 @@ class SourceDataProcessor
                         $empty = false;
                     }
                 }
-            } elseif (!empty($value)) {
+            } elseif ($value !== '' && $value !== null) {
                 $empty = false;
             }
         }

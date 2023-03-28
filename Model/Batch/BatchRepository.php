@@ -109,6 +109,11 @@ class BatchRepository
         return $batch;
     }
 
+    public function countProcessBatches(string $processIdentity): int
+    {
+        return $this->batchResource->countProcessBatches($processIdentity);
+    }
+
     public function cleanup(string $processIdentity): int
     {
         return $this->batchResource->deleteProcessData($processIdentity);

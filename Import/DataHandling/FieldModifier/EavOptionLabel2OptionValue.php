@@ -49,23 +49,33 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
      */
     private $optionsProcessor;
 
+    /**
+     * @var array
+     */
+    private $allowedFrontendInput;
+
     public function __construct(
         $config,
         EavConfig $eavConfig,
         ArgumentConverter $argumentConverter,
-        OptionsProcessor $optionsProcessor
+        OptionsProcessor $optionsProcessor,
+        array $allowedFrontendInput = []
     ) {
         parent::__construct($config);
         $this->eavConfig = $eavConfig;
         $this->argumentConverter = $argumentConverter;
         $this->optionsProcessor = $optionsProcessor;
+        $this->allowedFrontendInput = $allowedFrontendInput;
     }
 
     public function transform($value)
     {
         $map = $this->getMap();
         $attribute = $this->getEavAttribute();
-        if ($attribute && $attribute->getFrontendInput() === MultiSelect::NAME && !empty($value)) {
+        if ($attribute
+            && !empty($value)
+            && in_array($attribute->getFrontendInput(), $this->allowedFrontendInput)
+        ) {
             $multiSelectOptions = explode(',', (string)$value);
             $result = [];
             foreach ($multiSelectOptions as $option) {
@@ -144,8 +154,12 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
     {
         $attributeCode = $attribute->getAttributeCode();
         if (!isset($this->attributeOptions[$attributeCode])) {
+            $allOptions = array_merge(
+                $attribute->getSource()->getAllOptions(true, true), //adminhtml store options
+                $attribute->getSource()->getAllOptions() //default store options
+            );
             $this->attributeOptions[$attributeCode] = $this->optionsProcessor->process(
-                $attribute->getSource()->getAllOptions(),
+                $allOptions,
                 false
             );
         }

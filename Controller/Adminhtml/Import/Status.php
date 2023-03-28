@@ -3,6 +3,7 @@
 namespace Amasty\ImportCore\Controller\Adminhtml\Import;
 
 use Amasty\ImportCore\Api\ImportResultInterface;
+use Amasty\ImportCore\Model\ConfigProvider;
 use Amasty\ImportCore\Import\ImportResult;
 use Amasty\ImportCore\Model\Process\Process;
 use Amasty\ImportCore\Processing\JobManager;
@@ -38,9 +39,24 @@ class Status extends Action
             /** @var $importResult ImportResultInterface|ImportResult */
             list($process, $importResult) = $this->jobManager->watchJob($processIdentity)
                 ->getJobState();
+
+            if ($process->getPid()
+                && !$this->jobManager->isPidAlive($process->getPid())
+                && !in_array($process->getStatus(), [Process::STATUS_SUCCESS, Process::STATUS_FAILED])
+            ) {
+                $importResult->logMessage(
+                    ImportResultInterface::MESSAGE_CRITICAL,
+                    __(
+                        'The system process failed. For an error details please make sure that Debug mode is enabled '
+                            . 'and see %1',
+                        ConfigProvider::DEBUG_LOG_PATH
+                    )
+                );
+            }
+
             if ($importResult === null) {
                 $result = [
-                    'status' =>  'starting',
+                    'status' => 'starting',
                     'proceed' => 0,
                     'total' => 0,
                     'messages' => [
@@ -58,7 +74,7 @@ class Status extends Action
                         $importResult->getFilteringMessages()
                     );
                 $result = [
-                    'status' =>  $process->getStatus(),
+                    'status' => $process->getStatus(),
                     'proceed' => $importResult->getRecordsProcessed(),
                     'total' => $importResult->getTotalRecords(),
                     'messages' => $resultMessages

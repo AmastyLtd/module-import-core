@@ -15,6 +15,7 @@ use Amasty\ImportCore\Exception\JobDoneException;
 use Amasty\ImportCore\Exception\JobTerminatedException;
 use Amasty\ImportCore\Import\Config\EntityConfigProvider;
 use Amasty\ImportCore\Import\Parallelization\ResultMerger;
+use Amasty\ImportCore\Model\ConfigProvider;
 use Amasty\ImportCore\Model\Process\ProcessRepository;
 use Amasty\ImportExportCore\Parallelization\JobManager;
 use Amasty\ImportExportCore\Parallelization\JobManagerFactory;
@@ -39,6 +40,11 @@ class ImportStrategy
      * @var ImportResultInterfaceFactory
      */
     private $importResultFactory;
+
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
 
     /**
      * @var ProcessRepository
@@ -88,6 +94,7 @@ class ImportStrategy
     public function __construct(
         ImportResultInterfaceFactory $importResultFactory,
         ObjectManagerInterface $objectManager,
+        ConfigProvider $configProvider,
         ProcessRepository $processRepository,
         JobManagerFactory $jobManagerFactory,
         EntityConfigProvider $entityConfigProvider,
@@ -100,6 +107,7 @@ class ImportStrategy
     ) {
         $this->objectManager = $objectManager;
         $this->importResultFactory = $importResultFactory;
+        $this->configProvider = $configProvider;
         $this->processRepository = $processRepository;
         $this->resultMerger = $resultMerger;
         $this->jobManagerFactory = $jobManagerFactory;
@@ -158,6 +166,23 @@ class ImportStrategy
                 return $importResult;
             } catch (\Exception $e) {
                 $importProcess->addCriticalMessage($e->getMessage());
+            } catch (\Throwable $e) {
+                $writer = new \Zend_Log_Writer_Stream(BP . '/' . ConfigProvider::DEBUG_LOG_PATH);
+                $logger = new \Zend_Log();
+                $logger->addWriter($writer);
+                $logger->info($e->__toString());
+
+                if ($this->configProvider->isDebugEnabled()) {
+                    $importProcess->addCriticalMessage($e->__toString());
+                } else {
+                    $importProcess->addCriticalMessage(
+                        'An error occurred during the import process. '
+                        . 'For the error details please enable \'Debug Mode\' or see the '
+                        . ConfigProvider::DEBUG_LOG_PATH
+                    );
+                }
+                $importProcess->getImportResult()->terminateImport(true);
+                break;
             }
         }
 
@@ -302,7 +327,7 @@ class ImportStrategy
             }
 
             if (!isset($groupConfig['sortOrder'])) {
-                new \LogicException('"sortOrder" is not specified for action group "' . $groupCode . '"');
+                throw new \LogicException('"sortOrder" is not specified for action group "' . $groupCode . '"');
             }
 
             $sortOrder = (int)$groupConfig['sortOrder'];

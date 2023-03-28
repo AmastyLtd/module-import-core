@@ -43,7 +43,7 @@ class DataLoadActionTest extends TestCase
         $importProcessMock = $this->createMock(ImportProcessInterface::class);
         $batchMock = $this->createMock(Batch::class);
 
-        $importProcessMock->expects($this->once())
+        $importProcessMock->expects($this->any())
             ->method('getIdentity')
             ->willReturn(self::IDENTITY);
         $this->batchRepositoryMock->expects($this->once())
@@ -73,7 +73,7 @@ class DataLoadActionTest extends TestCase
         $importResultMock = $this->createMock(ImportResultInterface::class);
         $batchMock = $this->createMock(Batch::class);
 
-        $importProcessMock->expects($this->once())
+        $importProcessMock->expects($this->any())
             ->method('getIdentity')
             ->willReturn(self::IDENTITY);
         $this->batchRepositoryMock->expects($this->once())

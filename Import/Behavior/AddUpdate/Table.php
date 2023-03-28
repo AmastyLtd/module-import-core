@@ -6,11 +6,42 @@ namespace Amasty\ImportCore\Import\Behavior\AddUpdate;
 
 use Amasty\ImportCore\Api\Behavior\BehaviorObserverInterface;
 use Amasty\ImportCore\Api\Behavior\BehaviorResultInterface;
+use Amasty\ImportCore\Api\Behavior\BehaviorResultInterfaceFactory;
 use Amasty\ImportCore\Api\BehaviorInterface;
 use Amasty\ImportCore\Import\Behavior\Table as TableBehavior;
+use Amasty\ImportCore\Import\Behavior\UniqueConstraintsProcessor;
+use Amasty\ImportCore\Import\Utils\DuplicateFieldChecker;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class Table extends TableBehavior implements BehaviorInterface
 {
+    /**
+     * @var UniqueConstraintsProcessor
+     */
+    private $uniqueConstraintsProcessor;
+
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ResourceConnection $resourceConnection,
+        SerializerInterface $serializer,
+        BehaviorResultInterfaceFactory $behaviorResultFactory,
+        DuplicateFieldChecker $duplicateFieldChecker,
+        UniqueConstraintsProcessor $uniqueConstraintsProcessor,
+        array $config
+    ) {
+        parent::__construct(
+            $objectManager,
+            $resourceConnection,
+            $serializer,
+            $behaviorResultFactory,
+            $duplicateFieldChecker,
+            $config
+        );
+        $this->uniqueConstraintsProcessor = $uniqueConstraintsProcessor;
+    }
+
     public function execute(array &$data, ?string $customIdentifier = null): BehaviorResultInterface
     {
         $result = $this->resultFactory->create();
@@ -35,7 +66,7 @@ class Table extends TableBehavior implements BehaviorInterface
             );
 
             $maxId = $this->getMaxId();
-            list($dataToInsert, $dataToUpdate) = $this->separateData($preparedData);
+            [$dataToInsert, $dataToUpdate] = $this->separateData($preparedData);
             if ($dataToInsert) {
                 $connection->insertMultiple($this->getTable(), $dataToInsert);
             }
@@ -76,6 +107,7 @@ class Table extends TableBehavior implements BehaviorInterface
     private function separateData(array $preparedData): array
     {
         $dataToInsert = $dataToUpdate = [];
+        $this->uniqueConstraintsProcessor->updateData($preparedData, $this->getTable(), $this->getIdField());
         foreach ($preparedData as $row) {
             if (!empty($row[$this->getIdField()])) {
                 $dataToUpdate[] = $row;

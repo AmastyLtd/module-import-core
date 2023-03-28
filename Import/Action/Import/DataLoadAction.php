@@ -24,6 +24,12 @@ class DataLoadAction implements ActionInterface
 
     public function execute(ImportProcessInterface $importProcess): void
     {
+        if ($importProcess->getBatchQty() === 0) {
+            //batch qty read in prepare actions will be reset in core import
+            $importProcess->setBatchQty(
+                $this->batchRepository->countProcessBatches($importProcess->getIdentity())
+            );
+        }
         $batch = $this->batchRepository->fetchBatch($importProcess->getIdentity());
 
         if ($batch->getId()) {
