@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace Amasty\ImportCore\Processing;
 
 use Amasty\ImportCore\Api\Config\ProfileConfigInterface;
+use Amasty\ImportCore\Model\ConfigProvider;
 use Amasty\ImportCore\Model\Process\ProcessRepository;
-use Amasty\ImportCore\Model\Process\ResourceModel\CollectionFactory;
 use Amasty\ImportExportCore\Utils\CliPhpResolver;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem;
 use Magento\Framework\Shell;
 
 class JobManager
 {
-    /**
-     * @var CollectionFactory
-     */
-    private $processCollectionFactory;
-
     /**
      * @var JobWatcherFactory
      */
@@ -38,18 +35,30 @@ class JobManager
      */
     private $cliPhpResolver;
 
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
+
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
     public function __construct(
-        CollectionFactory $processCollectionFactory,
         JobWatcherFactory $jobWatcherFactory,
         ProcessRepository $processRepository,
         CliPhpResolver $cliPhpResolver,
-        Shell $shell
+        ConfigProvider $configProvider,
+        Shell $shell,
+        Filesystem $filesystem
     ) {
-        $this->processCollectionFactory = $processCollectionFactory;
         $this->jobWatcherFactory = $jobWatcherFactory;
         $this->shell = $shell;
         $this->processRepository = $processRepository;
         $this->cliPhpResolver = $cliPhpResolver;
+        $this->configProvider = $configProvider;
+        $this->filesystem = $filesystem;
     }
 
     public function requestJob(ProfileConfigInterface $profileConfig, string $identity = null): JobWatcher
@@ -71,8 +80,17 @@ class JobManager
         $identity = $this->processRepository->initiateProcess($profileConfig, $identity);
 
         $phpPath = $this->cliPhpResolver->getExecutablePath();
+        $memoryLimit = $this->configProvider->isNoMemoryLimit() ? ' -dmemory_limit=-1' : '';
+        if ($this->configProvider->isDebugEnabled()) {
+            $reader = $this->filesystem->getDirectoryRead(DirectoryList::ROOT);
+            $logAbsolutePath = $reader->getAbsolutePath(ConfigProvider::DEBUG_LOG_PATH);
+            $redirectOutput = ' >> ' . $logAbsolutePath;
+        } else {
+            $redirectOutput = ' > /dev/null';
+        }
+
         $this->shell->execute(
-            $phpPath . ' %s amasty:import:run-job %s > /dev/null &',
+            $phpPath . $memoryLimit . ' %s amasty:import:run-job %s' . $redirectOutput . ' &',
             [
                 BP . '/bin/magento',
                 $identity

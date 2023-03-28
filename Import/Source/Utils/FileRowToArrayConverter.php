@@ -60,7 +60,7 @@ class FileRowToArrayConverter
         foreach ($rowData as $key => $row) {
             if (is_array($row)) {
                 $row = $this->processMergedSubEntity(
-                    $rowData[$mainEntityKey],
+                    (string) $rowData[$mainEntityKey],
                     $row[0],
                     $structure[$key],
                     $rowSeparator
@@ -115,7 +115,7 @@ class FileRowToArrayConverter
                 $nestedSubEntities[$key] = $row;
                 continue;
             }
-            $explodedSubEntities[$key] = explode($rowSeparator, $row);
+            $explodedSubEntities[$key] = explode($rowSeparator, (string) $row);
         }
 
         if (!isset($explodedSubEntities[$subEntityParentKey])) {
@@ -137,7 +137,7 @@ class FileRowToArrayConverter
             foreach ($formattedData as &$row) {
                 foreach ($nestedSubEntities as $subEntityKey => $subEntityData) {
                     $row[$subEntityKey] = $this->processMergedSubEntity(
-                        $row[$subEntityMainKey],
+                        (string) $row[$subEntityMainKey],
                         $subEntityData[0],
                         $subEntityStructure[$subEntityKey],
                         $rowSeparator

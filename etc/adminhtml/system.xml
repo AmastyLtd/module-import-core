@@ -26,6 +26,21 @@
                     </depends>
                 </field>
             </group>
+            <group id="advanced" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Advanced</label>
+                <field id="debug" translate="label comment" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Enable Debug Mode</label>
+                    <comment><![CDATA[Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="no_memory_limit" translate="label comment" type="select" sortOrder="10" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Enable Import without Memory Limit</label>
+                    <comment><![CDATA[Enable this setting if import process terminates because of the memory limit exceed.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
             <group id="system" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>System Settings</label>
                 <field id="cli_php_path" translate="label comment" type="note" showInDefault="1" showInWebsite="0" showInStore="0">

@@ -58,6 +58,13 @@ class ValidationAction implements ActionInterface
 
     public function execute(ImportProcessInterface $importProcess): void
     {
+        if (!$this->checkUniqueOfIdField($importProcess)) {
+            $importProcess->addErrorMessage(__('There is entity identifier duplicated in the file.')->render());
+            $importProcess->getImportResult()->terminateImport(true);
+
+            return;
+        }
+
         if (empty($this->fieldRulesRegistry)
             && empty($this->rowRulesRegistry)
         ) {
@@ -105,6 +112,29 @@ class ValidationAction implements ActionInterface
         if ($importProcess->getBatchNumber() == 1) {
             $importProcess->addInfoMessage((string)__('The data is being validated.'));
         }
+    }
+
+    private function checkUniqueOfIdField(ImportProcessInterface $importProcess): bool
+    {
+        $data = $importProcess->getData();
+        $idFieldName = $importProcess->getProfileConfig()->getEntityIdentifier()
+            ?: $this->dataStructureProvider->getDataStructure(
+                $importProcess->getEntityConfig(),
+                $importProcess->getProfileConfig()
+            )->getIdFieldName();
+
+        $uniqueIdentifiers = [];
+        foreach ($data as $row) {
+            if (!isset($row[$idFieldName])) {
+                return true; //validation of ID field existence will be checked in validators
+            }
+            if (in_array($row[$idFieldName], $uniqueIdentifiers)) {
+                return false;
+            }
+            $uniqueIdentifiers[] = $row[$idFieldName];
+        }
+
+        return true;
     }
 
     private function isNeedToTerminate(ImportProcessInterface $importProcess): bool
@@ -299,7 +329,7 @@ class ValidationAction implements ActionInterface
         ImportProcessInterface $importProcess,
         array $row,
         int $rowNumber,
-        $rowRule = null
+        ?RowValidatorInterface $rowRule = null
     ): bool {
         if ($rowRule && !$rowRule->validate($row)) {
             $importProcess->addValidationError((string)__($rowRule->getMessage()), $rowNumber);
@@ -309,18 +339,16 @@ class ValidationAction implements ActionInterface
 
         if (isset($row[SourceDataStructure::SUB_ENTITIES_DATA_KEY])) {
             foreach ($row[SourceDataStructure::SUB_ENTITIES_DATA_KEY] as $entityCode => $subEntityRows) {
-                if (isset($this->rowRulesRegistry[$entityCode])) {
-                    foreach ($subEntityRows as &$subEntityRow) {
-                        $isSubEntityRowValid = $this->isRowDataValid(
-                            $importProcess,
-                            $subEntityRow,
-                            $rowNumber,
-                            $this->rowRulesRegistry[$entityCode]
-                        );
+                foreach ($subEntityRows as &$subEntityRow) {
+                    $isSubEntityRowValid = $this->isRowDataValid(
+                        $importProcess,
+                        $subEntityRow,
+                        $rowNumber,
+                        $this->rowRulesRegistry[$entityCode] ?? null
+                    );
 
-                        if (!$isSubEntityRowValid) {
-                            return false;
-                        }
+                    if (!$isSubEntityRowValid) {
+                        return false;
                     }
                 }
             }

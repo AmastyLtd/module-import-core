@@ -177,7 +177,7 @@ class ProcessRepository
             ->setProfileConfigSerialized(
                 $this->serializer->serialize($profileConfig, ProfileConfigInterface::class)
             )->setStatus(Process::STATUS_PENDING)
-            ->setPid(null)
+            ->setPid(getmypid())
             ->setEntityCode($profileConfig->getEntityCode())
             ->setImportResult(null);
         $this->processResource->save($process);

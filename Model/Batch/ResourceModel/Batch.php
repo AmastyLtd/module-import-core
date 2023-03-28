@@ -24,6 +24,22 @@ class Batch extends AbstractDb
     }
 
     /**
+     * @param string $processIdentity
+     * @return int
+     */
+    public function countProcessBatches(string $processIdentity): int
+    {
+        $countSelect = $this->getConnection()->select()->from(
+            $this->getMainTable(),
+            [BatchModel::ID]
+        )->where(
+            BatchModel::PROCESS_IDENTITY . ' = "' . $processIdentity . '"'
+        )->distinct();
+
+        return count($this->getConnection()->fetchCol($countSelect));
+    }
+
+    /**
      * Delete all batches related to specified profile id and return number of deleted batches
      * @param string $processIdentity
      * @return int
