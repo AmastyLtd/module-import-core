@@ -1,7 +1,13 @@
 <?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
 
 namespace Amasty\ImportCore\Console\Command;
 
+use Magento\Framework\Console\Cli;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,5 +51,7 @@ class RunJob extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->runJob->execute($input, $output);
+
+        return Cli::RETURN_SUCCESS;
     }
 }

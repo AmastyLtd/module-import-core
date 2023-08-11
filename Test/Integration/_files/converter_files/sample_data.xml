@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */-->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:amasty:module:Amasty_ImportCore:etc/am_import.xsd">
     <entity code="sample_data">

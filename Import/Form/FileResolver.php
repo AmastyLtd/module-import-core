@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
 
 namespace Amasty\ImportCore\Import\Form;
 
@@ -39,7 +44,7 @@ class FileResolver implements FormInterface
                         'config' => [
                             'label' => (isset($arguments['label'])
                                 ? __($arguments['label'])
-                                : __('Import File')),
+                                : __('Import Source')),
                             'componentType' => 'fieldset',
                             'visible' => true,
                             'dataScope' => '',
@@ -53,6 +58,11 @@ class FileResolver implements FormInterface
                             'data' => [
                                 'config' => [
                                     'label' => __('Import Source'),
+                                    'notice' => __(
+                                        'Please note that only certain file types are allowed for different '
+                                        . 'import sources. Options with unavailable file types will be inactive '
+                                        . 'in the file type selection setting for the selected source.'
+                                    ),
                                     'visible' => true,
                                     'dataScope' => 'file_resolver_type',
                                     'validation' => [

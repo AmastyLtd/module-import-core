@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
+
 namespace Amasty\ImportCore\Model\Process;
 
 use Amasty\ImportCore\Api\Config\ProfileConfigInterface;
@@ -107,6 +113,17 @@ class ProcessRepository
         return true;
     }
 
+    public function updateProcessPid(string $identity, int $pid): void
+    {
+        try {
+            $process = $this->getByIdentity($identity);
+        } catch (NoSuchEntityException $e) {
+            return;
+        }
+        $process->setPid($pid);
+        $this->processResource->save($process);
+    }
+
     public function updateProcess(ImportProcessInterface $importProcess)
     {
         try {
@@ -177,12 +194,20 @@ class ProcessRepository
             ->setProfileConfigSerialized(
                 $this->serializer->serialize($profileConfig, ProfileConfigInterface::class)
             )->setStatus(Process::STATUS_PENDING)
-            ->setPid(getmypid())
+            ->setPid(null)
             ->setEntityCode($profileConfig->getEntityCode())
             ->setImportResult(null);
         $this->processResource->save($process);
 
         return $identity;
+    }
+
+    public function checkProcessStatus(string $identity): string
+    {
+        $process = $this->processFactory->create();
+        $this->processResource->load($process, $identity, Process::IDENTITY);
+
+        return (string)$process->getStatus();
     }
 
     public function generateNewIdentity()

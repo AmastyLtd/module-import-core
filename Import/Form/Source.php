@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
 
 namespace Amasty\ImportCore\Import\Form;
 
@@ -12,6 +17,8 @@ use Magento\Framework\ObjectManagerInterface;
 
 class Source implements FormInterface
 {
+    public const CORE_FILE_CONFIG_PATH = 'amimport_import_form.amimport_import_form.file_config';
+
     /**
      * @var SourceConfigInterface
      */
@@ -22,12 +29,19 @@ class Source implements FormInterface
      */
     private $objectManager;
 
+    /**
+     * @var array
+     */
+    private $dependedOptionsMap;
+
     public function __construct(
         SourceConfigInterface $sourceConfig,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        array $dependedOptionsMap = []
     ) {
         $this->sourceConfig = $sourceConfig;
         $this->objectManager = $objectManager;
+        $this->dependedOptionsMap = $dependedOptionsMap;
     }
 
     public function getMeta(EntityConfigInterface $entityConfig, array $arguments = []): array
@@ -39,7 +53,7 @@ class Source implements FormInterface
                         'config' => [
                             'label' => (isset($arguments['label'])
                                 ? __($arguments['label'])
-                                : __('Import Source')),
+                                : __('Import File')),
                             'componentType' => 'fieldset',
                             'additionalClasses' => 'amimportcore-fieldset',
                             'visible' => true,
@@ -53,6 +67,9 @@ class Source implements FormInterface
                             'data' => [
                                 'config' => [
                                     'label' => __('Import File Type'),
+                                    'notice' => __(
+                                        'Options will be available according to the selected import source.'
+                                    ),
                                     'visible' => true,
                                     'dataScope' => 'source_type',
                                     'source' => 'source_type',
@@ -60,8 +77,11 @@ class Source implements FormInterface
                                         'required-entry' => true
                                     ],
                                     'dataType' => 'select',
-                                    'component' => 'Amasty_ImportCore/js/type-selector',
+                                    'component' => 'Amasty_ImportCore/js/form/element/file-type-select',
+                                    'elementTmpl' => 'Amasty_ImportCore/form/element/disabled-select',
                                     'prefix' => 'source_',
+                                    'fileProviderPath' => $arguments['fileProviderPath'] ?? self::CORE_FILE_CONFIG_PATH,
+                                    'dependedOptionsMap' => $this->dependedOptionsMap,
                                     'formElement' => 'select',
                                     'componentType' => 'select',
                                     'additionalClasses' => 'amimportcore-field -sourceconfig',

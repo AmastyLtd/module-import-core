@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */-->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- Import Strategies -->
@@ -331,13 +337,13 @@
                         <item name="fieldsProvider" xsi:type="string">amimport_import_form.amimport_import_form.fieldsConfigAdvanced</item>
                     </item>
                 </item>
-                <item name="source" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">20</item>
-                    <item name="metaClass" xsi:type="object">Amasty\ImportCore\Import\Form\Source</item>
-                </item>
                 <item name="fileResolver" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
                     <item name="metaClass" xsi:type="object">Amasty\ImportCore\Import\Form\FileResolver</item>
+                </item>
+                <item name="source" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="metaClass" xsi:type="object">Amasty\ImportCore\Import\Form\Source</item>
                 </item>
                 <item name="fields" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">40</item>

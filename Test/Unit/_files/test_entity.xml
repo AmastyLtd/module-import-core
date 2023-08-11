@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */-->
 <items>
     <item>
         <entity_id>1</entity_id>

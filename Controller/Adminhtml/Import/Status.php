@@ -1,13 +1,16 @@
 <?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
 
 namespace Amasty\ImportCore\Controller\Adminhtml\Import;
 
-use Amasty\ImportCore\Api\ImportResultInterface;
-use Amasty\ImportCore\Model\ConfigProvider;
-use Amasty\ImportCore\Import\ImportResult;
-use Amasty\ImportCore\Model\Process\Process;
+use Amasty\ImportCore\Model\Process\StatusChecker;
 use Amasty\ImportCore\Processing\JobManager;
 use Magento\Backend\App\Action;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Json;
 
@@ -16,70 +19,24 @@ class Status extends Action
     public const ADMIN_RESOURCE = 'Amasty_ImportCore::import';
 
     /**
-     * @var JobManager
+     * @var StatusChecker
      */
-    private $jobManager;
+    private $statusChecker;
 
     public function __construct(
         Action\Context $context,
-        JobManager $jobManager
+        JobManager $jobManager, //@deprecated backward compatibility
+        ?StatusChecker $statusChecker = null
     ) {
         parent::__construct($context);
-        $this->jobManager = $jobManager;
+        $this->statusChecker = $statusChecker ?: ObjectManager::getInstance()->get(StatusChecker::class);
     }
 
     public function execute()
     {
-        $result = [];
-
         $processIdentity = $this->getRequest()->getParam('processIdentity');
         if ($processIdentity) {
-
-            /** @var $process Process */
-            /** @var $importResult ImportResultInterface|ImportResult */
-            list($process, $importResult) = $this->jobManager->watchJob($processIdentity)
-                ->getJobState();
-
-            if ($process->getPid()
-                && !$this->jobManager->isPidAlive($process->getPid())
-                && !in_array($process->getStatus(), [Process::STATUS_SUCCESS, Process::STATUS_FAILED])
-            ) {
-                $importResult->logMessage(
-                    ImportResultInterface::MESSAGE_CRITICAL,
-                    __(
-                        'The system process failed. For an error details please make sure that Debug mode is enabled '
-                            . 'and see %1',
-                        ConfigProvider::DEBUG_LOG_PATH
-                    )
-                );
-            }
-
-            if ($importResult === null) {
-                $result = [
-                    'status' => 'starting',
-                    'proceed' => 0,
-                    'total' => 0,
-                    'messages' => [
-                        [
-                            'type' => 'info',
-                            'message' => __('Process Started')
-                        ]
-                    ]
-                ];
-            } else {
-                $resultMessages =
-                    array_merge(
-                        $importResult->getMessages(),
-                        $importResult->getPreparedValidationMessages(),
-                        $importResult->getFilteringMessages()
-                    );
-                $result = [
-                    'status' => $process->getStatus(),
-                    'proceed' => $importResult->getRecordsProcessed(),
-                    'total' => $importResult->getTotalRecords(),
-                    'messages' => $resultMessages
-                ];
-            }
+            $result = $this->statusChecker->check($processIdentity)->__toArray();
         } else {
             $result['error'] = __('Process Identity is not set.');
         }

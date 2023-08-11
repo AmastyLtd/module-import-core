@@ -654,6 +654,15 @@
                 </xs:complexType>
             </xs:element>
 
+            <xs:element name="optionValue" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:group ref="for_behavior"/>
+                    <xs:attribute name="class" default="Amasty\ImportCore\Import\Validation\EntityValidator\OptionValueValidator" type="modelName" />
+                    <xs:attribute name="error" default="Option Value for column %1 doesn't exist."/>
+                    <xs:attribute name="optionSource" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+
             <!-- Out Of Range Validation -->
             <xs:element name="integerRange" minOccurs="0" maxOccurs="1">
                 <xs:complexType>

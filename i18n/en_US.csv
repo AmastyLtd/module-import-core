@@ -5,8 +5,6 @@
 "Requested Process Identity not found.","Requested Process Identity not found."
 "Amasty Import","Amasty Import"
 Import,Import
-"The system process failed. For an error details please make sure that Debug mode is enabled and see %1","The system process failed. For an error details please make sure that Debug mode is enabled and see %1"
-"Process Started","Process Started"
 "File can not be saved to the destination folder.","File can not be saved to the destination folder."
 "Something went wrong. Please try again.","Something went wrong. Please try again."
 "Import process was terminated.","Import process was terminated."
@@ -88,8 +86,8 @@ Enabled,Enabled
 "Map Selected Fields","Map Selected Fields"
 "Map Fields","Map Fields"
 "Delete Table","Delete Table"
-"Import File","Import File"
 "Import Source","Import Source"
+"Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source.","Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source."
 "Please Select...","Please Select..."
 "Images File Directory","Images File Directory"
 "For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.","For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated."
@@ -103,7 +101,9 @@ Filter,Filter
 "Please specify number of errors to halt import process.","Please specify number of errors to halt import process."
 "Entity Code","Entity Code"
 "Form Type","Form Type"
+"Import File","Import File"
 "Import File Type","Import File Type"
+"Options will be available according to the selected import source.","Options will be available according to the selected import source."
 "Wrong source form class: %1","Wrong source form class: %1"
 "%1 entity validation failed:","%1 entity validation failed:"
 "There appears to be no records to import. Please check your filtering conditions.","There appears to be no records to import. Please check your filtering conditions."
@@ -140,6 +140,9 @@ Filter,Filter
 "Process with specified identity ""%1"" not found.","Process with specified identity ""%1"" not found."
 "Unable to remove batch with ID %1. Error: %2","Unable to remove batch with ID %1. Error: %2"
 "Unable to remove batch. Error: %1","Unable to remove batch. Error: %1"
+"Process Started","Process Started"
+"The import process failed to launch. Please, check your PHP executable path or see log for more details.","The import process failed to launch. Please, check your PHP executable path or see log for more details."
+"The system process failed. For an error details please make sure that Debug mode is enabled and see %1","The system process failed. For an error details please make sure that Debug mode is enabled and see %1"
 "Entity with specified ID ""%1"" not found.","Entity with specified ID ""%1"" not found."
 Cancel,Cancel
 From,From

@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */
+
 namespace Amasty\ImportCore\Test\Unit\Import\Config\Eav\Attribute;
 
 use Amasty\ImportCore\Import\Config\Eav\Attribute\OptionsConverter;
