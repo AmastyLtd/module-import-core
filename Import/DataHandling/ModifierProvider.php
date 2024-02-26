@@ -36,6 +36,7 @@ class ModifierProvider
         FieldModifier\CapitalizeEachWord::class,
         FieldModifier\Strip::class,
         FieldModifier\Replace::class,
+        FieldModifier\FullMatchReplace::class,
         FieldModifier\ReplaceFirst::class,
 
         // numeric

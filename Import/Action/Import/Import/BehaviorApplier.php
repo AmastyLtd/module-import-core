@@ -109,7 +109,7 @@ class BehaviorApplier
                     true
                 );
                 $subEntityResult = $behavior->execute($rowSubEntities[$childEntityCode]);
-
+                $affectedIds = $subEntityResult->getAffectedIds();
                 if (isset($this->behaviorResults[$childEntityCode])) {
                     $subEntityResult->merge($this->behaviorResults[$childEntityCode]);
                 }
@@ -127,7 +127,7 @@ class BehaviorApplier
                     $this->executeSubEntities(
                         $subEntityConfig,
                         $rowSubEntities[$childEntityCode],
-                        $subEntityResult->getAffectedIds()
+                        $affectedIds
                     );
                 }
             }

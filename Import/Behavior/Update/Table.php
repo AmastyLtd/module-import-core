@@ -12,11 +12,45 @@ namespace Amasty\ImportCore\Import\Behavior\Update;
 
 use Amasty\ImportCore\Api\Behavior\BehaviorObserverInterface;
 use Amasty\ImportCore\Api\Behavior\BehaviorResultInterface;
+use Amasty\ImportCore\Api\Behavior\BehaviorResultInterfaceFactory;
 use Amasty\ImportCore\Api\BehaviorInterface;
 use Amasty\ImportCore\Import\Behavior\Table as TableBehavior;
+use Amasty\ImportCore\Import\Behavior\UniqueConstraintsProcessor;
+use Amasty\ImportCore\Import\Utils\DuplicateFieldChecker;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class Table extends TableBehavior implements BehaviorInterface
 {
+    /**
+     * @var UniqueConstraintsProcessor
+     */
+    private $uniqueConstraintsProcessor;
+
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ResourceConnection $resourceConnection,
+        SerializerInterface $serializer,
+        BehaviorResultInterfaceFactory $behaviorResultFactory,
+        DuplicateFieldChecker $duplicateFieldChecker,
+        array $config,
+        UniqueConstraintsProcessor $uniqueConstraintsProcessor = null
+    ) {
+        parent::__construct(
+            $objectManager,
+            $resourceConnection,
+            $serializer,
+            $behaviorResultFactory,
+            $duplicateFieldChecker,
+            $config
+        );
+        // OM for backward compatibility
+        $this->uniqueConstraintsProcessor = $uniqueConstraintsProcessor
+            ?? ObjectManager::getInstance()->get(UniqueConstraintsProcessor::class);
+    }
+
     public function execute(array &$data, ?string $customIdentifier = null): BehaviorResultInterface
     {
         $result = $this->resultFactory->create();
@@ -30,6 +64,7 @@ class Table extends TableBehavior implements BehaviorInterface
             $this->updateDataIdFields($preparedData, $customIdentifier);
         }
 
+        $this->uniqueConstraintsProcessor->updateData($preparedData, $this->getTable(), $this->getIdField());
         $idField = $this->getIdField();
         $filledIds = $this->getUniqueIds($preparedData);
 

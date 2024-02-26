@@ -461,4 +461,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="Amasty\ImportCore\Import\DataHandling\FieldModifier\CreateAttributeValue">
+        <arguments>
+            <argument name="multiSelectInput" xsi:type="array">
+                <item name="checkboxes" xsi:type="string">checkboxes</item>
+                <item name="multiselect" xsi:type="const">Magento\Ui\Component\Form\Element\MultiSelect::NAME</item>
+            </argument>
+            <argument name="disallowedFrontendInput" xsi:type="array">
+                <item name="boolean" xsi:type="string">boolean</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

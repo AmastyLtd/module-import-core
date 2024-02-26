@@ -15,6 +15,7 @@ use Amasty\ImportCore\Api\Modifier\FieldModifierInterface;
 use Amasty\ImportCore\Api\Modifier\RelationModifierInterface;
 use Amasty\ImportCore\Api\Modifier\RowModifierInterface;
 use Amasty\ImportCore\Import\Config\EntityConfigProvider;
+use Amasty\ImportCore\Import\Config\Profile\Modifier;
 use Amasty\ImportCore\Import\Config\RelationConfigProvider;
 use Amasty\ImportCore\Import\DataHandling\ActionConfigBuilder;
 use Amasty\ImportCore\Import\DataHandling\FieldModifier\DefaultValue;
@@ -159,11 +160,15 @@ class DataHandlerProvider
                     $this->createDefaultValueModifier($defaultValueFields[$field->getName()]);
                 continue;
             }
-            foreach ($field->getModifiers() as $fieldModifier) {
-                if ($fieldModifier->getGroup() != $modifierGroup) {
-                    continue;
-                }
 
+            $modifiersByGroup = [];
+            foreach ($field->getModifiers() as $fieldModifier) {
+                if ($fieldModifier->getGroup() === $modifierGroup) {
+                    $modifiersByGroup[] = $fieldModifier;
+                }
+            }
+
+            foreach ($this->sortModifiers($modifiersByGroup) as $fieldModifier) {
                 $configClass = $this->configFactory->create(
                     [
                         'name' => $fieldModifier->getModifierClass(),
@@ -347,5 +352,32 @@ class DataHandlerProvider
         }
 
         return '';
+    }
+
+    /**
+     * @param Modifier[] $modifiers
+     *
+     * @return Modifier[]
+     */
+    private function sortModifiers(array $modifiers): array
+    {
+        $modifiersPriority = [];
+        foreach ($modifiers as $fieldModifier) {
+            $priority = 0;
+            foreach ($fieldModifier->getArguments() as $argument) {
+                $priority = $argument->getData()['name'] === 'modifier_priority'
+                    ? (int)$argument->getData()['value']
+                    : 0;
+            }
+            $modifiersPriority[] = [
+                'class' => $fieldModifier,
+                'sortOrder' => $priority
+            ];
+        }
+        uasort($modifiersPriority, static function ($first, $second) {
+            return $first['sortOrder'] <=> $second['sortOrder'];
+        });
+
+        return array_column($modifiersPriority, 'class');
     }
 }

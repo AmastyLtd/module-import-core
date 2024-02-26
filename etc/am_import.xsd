@@ -631,6 +631,13 @@
                     <xs:attribute name="error" default="Wrong date format in column %1." type="xs:string" />
                 </xs:complexType>
             </xs:element>
+            <xs:element name="json" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:group ref="for_behavior"/>
+                    <xs:attribute name="class" fixed="Amasty\ImportCore\Import\Validation\ValueValidator\Json" type="modelName" />
+                    <xs:attribute name="error" default="Value of column %1 must be JSON format." />
+                </xs:complexType>
+            </xs:element>
             <!-- Regex -->
             <xs:element name="regex" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>

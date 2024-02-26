@@ -24,12 +24,14 @@ Append,Append
 Capitalize,Capitalize
 "Capitalize Each Word","Capitalize Each Word"
 "Category Names Path To Entity Id","Category Names Path To Entity Id"
+"Create New Attribute Value","Create New Attribute Value"
 "Convert group_code to group_id","Convert group_code to group_id"
 "Date Format","Date Format"
 "Default Value","Default Value"
 "Option Label To Option Value","Option Label To Option Value"
 "Empty to Null","Empty to Null"
 Explode,Explode
+"Full Match Replace","Full Match Replace"
 "Lower Case","Lower Case"
 Map,Map
 "Absolute Value","Absolute Value"

@@ -21,14 +21,17 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
-use Magento\Ui\Component\Form\Element\MultiSelect;
+use Magento\Eav\Api\AttributeOptionManagementInterface;
+use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
+use Magento\Store\Model\Store;
 
-class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifierInterface
+class CreateAttributeValue extends AbstractModifier implements FieldModifierInterface
 {
     /**
      * @var array
      */
-    protected $config;
+    private $attributeOptions = [];
 
     /**
      * @var array|null
@@ -38,17 +41,12 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
     /**
      * @var array
      */
-    private $attributeOptions = [];
+    private $multiSelectInput;
 
     /**
-     * @var EavConfig
+     * @var array
      */
-    private $eavConfig;
-
-    /**
-     * @var ArgumentConverter
-     */
-    private $argumentConverter;
+    private $disallowedFrontendInput;
 
     /**
      * @var OptionsProcessor
@@ -56,44 +54,91 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
     private $optionsProcessor;
 
     /**
-     * @var array
+     * @var EavConfig
      */
-    private $allowedFrontendInput;
+    private $eavConfig;
+
+    /**
+     * @var AttributeOptionLabelInterfaceFactory
+     */
+    private $optionLabelFactory;
+
+    /**
+     * @var AttributeOptionInterfaceFactory
+     */
+    private $optionFactory;
+
+    /**
+     * @var AttributeOptionManagementInterface
+     */
+    private $attributeOptionManagement;
+
+    /**
+     * @var ArgumentConverter
+     */
+    private $argumentConverter;
 
     public function __construct(
         $config,
-        EavConfig $eavConfig,
-        ArgumentConverter $argumentConverter,
         OptionsProcessor $optionsProcessor,
-        array $allowedFrontendInput = []
+        EavConfig $eavConfig,
+        AttributeOptionLabelInterfaceFactory $optionLabelFactory,
+        AttributeOptionInterfaceFactory $optionFactory,
+        AttributeOptionManagementInterface $attributeOptionManagement,
+        ArgumentConverter $argumentConverter,
+        array $multiSelectInput = [],
+        array $disallowedFrontendInput = []
     ) {
         parent::__construct($config);
-        $this->eavConfig = $eavConfig;
-        $this->argumentConverter = $argumentConverter;
         $this->optionsProcessor = $optionsProcessor;
-        $this->allowedFrontendInput = $allowedFrontendInput;
+        $this->eavConfig = $eavConfig;
+        $this->optionLabelFactory = $optionLabelFactory;
+        $this->optionFactory = $optionFactory;
+        $this->attributeOptionManagement = $attributeOptionManagement;
+        $this->argumentConverter = $argumentConverter;
+        $this->multiSelectInput = $multiSelectInput;
+        $this->disallowedFrontendInput = $disallowedFrontendInput;
+    }
+
+    public function getLabel(): string
+    {
+        return __('Create New Attribute Value')->getText();
     }
 
     public function transform($value)
     {
         $map = $this->getMap();
-        $attribute = $this->getEavAttribute();
-        if ($attribute
-            && !empty($value)
-            && in_array($attribute->getFrontendInput(), $this->allowedFrontendInput)
+        if (!empty($value)
+            && ($attribute = $this->getEavAttribute())
+            && in_array($attribute->getFrontendInput(), $this->multiSelectInput)
         ) {
             $multiSelectOptions = explode(',', (string)$value);
             $result = [];
             foreach ($multiSelectOptions as $option) {
                 if (array_key_exists($option, $map)) {
-                    $result[] = $map[$option];
+                    $result[$map[$option]] = $option;
+                } elseif ($newOption = $this->createNewOption($attribute, $option)) {
+                    $result[$newOption] = $option;
                 }
             }
 
             return implode(',', $result);
         }
 
-        return $map[(string)$value] ?? $value;
+        if (!isset($map[$value])
+            && $value
+            && ($attribute = $this->getEavAttribute())
+            && !in_array($attribute->getFrontendInput(), $this->disallowedFrontendInput)
+        ) {
+            $this->createNewOption($attribute, $value);
+        }
+
+        return $value;
+    }
+
+    public function getGroup(): string
+    {
+        return ModifierProvider::CUSTOM_GROUP;
     }
 
     public function prepareArguments(FieldInterface $field, $requestData): array
@@ -114,7 +159,7 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
             'string'
         );
         $arguments[] = $this->argumentConverter->valueToArguments(
-            '20',
+            '10',
             'modifier_priority',
             'string'
         );
@@ -122,11 +167,6 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
         return array_merge([], ...$arguments);
     }
 
-    /**
-     * Get option value to option label map
-     *
-     * @return array
-     */
     private function getMap(): array
     {
         if ($this->map === null) {
@@ -151,16 +191,6 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
         return $this->map;
     }
 
-    public function getGroup(): string
-    {
-        return ModifierProvider::CUSTOM_GROUP;
-    }
-
-    public function getLabel(): string
-    {
-        return __('Option Label To Option Value')->getText();
-    }
-
     private function getAttributeOptions($attribute): array
     {
         $attributeCode = $attribute->getAttributeCode();
@@ -178,7 +208,7 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
         return $this->attributeOptions[$attributeCode];
     }
 
-    protected function getEavAttribute(): ?AbstractAttribute
+    private function getEavAttribute(): ?AbstractAttribute
     {
         $attribute = null;
         if (isset($this->config[ActionConfigBuilder::EAV_ENTITY_TYPE_CODE], $this->config['field'])) {
@@ -193,5 +223,29 @@ class EavOptionLabel2OptionValue extends AbstractModifier implements FieldModifi
         }
 
         return $attribute;
+    }
+
+    private function createNewOption(AbstractAttribute $attribute, string $value): ?string
+    {
+        $entityType = $attribute->getEntityType()->getEntityTypeCode();
+        if (null === $entityType) {
+            return null;
+        }
+
+        $optionLabel = $this->optionLabelFactory->create();
+        $optionLabel->setStoreId(Store::DEFAULT_STORE_ID);
+        $optionLabel->setLabel($value);
+
+        $option = $this->optionFactory->create();
+        $option->setLabel($optionLabel->getLabel());
+        $option->setStoreLabels([$optionLabel]);
+        $option->setSortOrder(0);
+        $option->setIsDefault(false);
+
+        return $this->attributeOptionManagement->add(
+            $entityType,
+            $attribute->getAttributeId(),
+            $option
+        );
     }
 }

@@ -13,6 +13,7 @@ namespace Amasty\ImportCore\Import\DataHandling;
 use Amasty\ImportCore\Api\Config\Entity\Field\ActionInterface;
 use Amasty\ImportCore\Api\Config\Entity\Field\ActionInterfaceFactory;
 use Amasty\ImportCore\Api\Modifier\FieldModifierInterface;
+use Amasty\ImportCore\Import\DataHandling\FieldModifier\CreateAttributeValue;
 use Amasty\ImportCore\Import\DataHandling\FieldModifier\EavOptionLabel2OptionValue;
 use Amasty\ImportCore\Import\DataHandling\FieldModifier\EmptyToNull;
 use Amasty\ImportCore\Import\DataHandling\FieldModifier\Str2Float;
@@ -142,6 +143,15 @@ class FieldModifierResolver
         if ($attribute->usesSource()
             && !in_array($attribute->getAttributeCode(), $this->isNotNeedCreateEavModifier)
         ) {
+            $modifiers[] = $this->createModifierConfig(
+                CreateAttributeValue::class,
+                $this->argumentsConverter->toArguments([
+                    'isMultiselect' => $attribute->getFrontendInput() === MultiSelect::NAME,
+                    'preselected' => true,
+                    'eavEntityType' => $attribute->getEntityType()->getEntityTypeCode(),
+                    'field' => $attribute->getAttributeCode()
+                ])
+            );
             $modifiers[] = $this->createModifierConfig(
                 EavOptionLabel2OptionValue::class,
                 $this->argumentsConverter->toArguments([
