@@ -340,7 +340,7 @@ class DataHandlerProvider
 
     private function isPreselected(array $arguments): bool
     {
-        return (bool)$this->findArgumentByName($arguments, ActionConfigBuilder::IS_PRESELECTED);
+        return $this->findArgumentByName($arguments, ActionConfigBuilder::IS_PRESELECTED) !== null;
     }
 
     private function findArgumentByName(array $arguments, string $name)
@@ -351,7 +351,7 @@ class DataHandlerProvider
             }
         }
 
-        return '';
+        return null;
     }
 
     /**

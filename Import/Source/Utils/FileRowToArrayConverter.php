@@ -13,7 +13,7 @@ namespace Amasty\ImportCore\Import\Source\Utils;
 use Magento\Framework\Stdlib\ArrayManager;
 
 /**
- * Used to convert read row from file to header structure format in CSV, ODS and XLSX type files
+ * Used for conversion of row read from file to header structure format in CSV, ODS and XLSX type files
  */
 class FileRowToArrayConverter
 {
@@ -54,22 +54,18 @@ class FileRowToArrayConverter
         return $convertedData;
     }
 
-    public function formatMergedSubEntities(array $rowData, array $structure, string $rowSeparator)
+    public function formatMergedSubEntities(array $rowData, array $structure, string $rowSeparator): array
     {
         $mainEntityKey = $this->findIdKey(self::ENTITY_ID_KEY, $structure);
 
-        if (!$mainEntityKey) {
-            return $rowData;
-        }
         $formattedData = [];
-
         foreach ($rowData as $key => $row) {
             if (is_array($row)) {
                 $row = $this->processMergedSubEntity(
-                    (string) $rowData[$mainEntityKey],
                     $row[0],
                     $structure[$key],
-                    $rowSeparator
+                    $rowSeparator,
+                    isset($rowData[$mainEntityKey]) ? (string)$rowData[$mainEntityKey] : null
                 );
             }
             $formattedData[$key] = $row;
@@ -105,31 +101,36 @@ class FileRowToArrayConverter
     }
 
     protected function processMergedSubEntity(
-        string $parentId,
         array $subEntityArray,
         array $subEntityStructure,
-        string $rowSeparator
+        string $rowSeparator,
+        ?string $parentId = null,
+        int $innerCounter = 0
     ): array {
-        $formattedData = [];
-        $explodedSubEntities = [];
-        $nestedSubEntities = [];
-        $subEntityParentKey = $this->findIdKey(self::PARENT_ID_KEY, $subEntityStructure);
-        $subEntityMainKey = $this->findIdKey(self::ENTITY_ID_KEY, $subEntityStructure);
-
+        $formattedData = $explodedSubEntities = $nestedSubEntities = [];
         foreach ($subEntityArray as $key => $row) {
             if (is_array($row)) {
-                $nestedSubEntities[$key] = $row;
+                $nestedSubEntities[$key] = $row; // saving nested subentities for further processing
                 continue;
             }
-            $explodedSubEntities[$key] = explode($rowSeparator, (string) $row);
+            $explodedSubEntities[$key] = explode($rowSeparator, (string)$row);
+        }
+        $explodedSubEntitiesCount = count($explodedSubEntities[array_key_first($explodedSubEntities)]);
+
+        $uniqueSubEntities = [];
+        if ($subEntityParentKey = $this->findIdKey(self::PARENT_ID_KEY, $subEntityStructure)) {
+            $uniqueSubEntities = array_values(array_unique($explodedSubEntities[$subEntityParentKey]));
         }
 
-        if (!isset($explodedSubEntities[$subEntityParentKey])) {
-            throw new \LogicException('We can\'t match parent element with child.');
-        }
-        $explodedSubEntitiesCount = count($explodedSubEntities[$subEntityParentKey]);
         for ($i = 0; $i < $explodedSubEntitiesCount; $i++) {
-            if ($explodedSubEntities[$subEntityParentKey][$i] != $parentId) {
+            if ($subEntityParentKey
+                && !$this->validateExplodedSubentity(
+                    (string)$explodedSubEntities[$subEntityParentKey][$i],
+                    $parentId,
+                    $uniqueSubEntities,
+                    $innerCounter
+                )
+            ) {
                 continue;
             }
 
@@ -140,15 +141,18 @@ class FileRowToArrayConverter
         $formattedData = array_values($formattedData);
 
         if (count($nestedSubEntities) > 0) {
+            $subEntityMainKey = $this->findIdKey(self::ENTITY_ID_KEY, $subEntityStructure);
             foreach ($formattedData as &$row) {
                 foreach ($nestedSubEntities as $subEntityKey => $subEntityData) {
                     $row[$subEntityKey] = $this->processMergedSubEntity(
-                        (string) $row[$subEntityMainKey],
                         $subEntityData[0],
                         $subEntityStructure[$subEntityKey],
-                        $rowSeparator
+                        $rowSeparator,
+                        $subEntityMainKey ? (string)$row[$subEntityMainKey] : null,
+                        $innerCounter
                     );
                 }
+                $innerCounter++;
             }
         }
 
@@ -173,18 +177,49 @@ class FileRowToArrayConverter
         $iterator->attachIterator(new \ArrayIterator($secondRow));
         $idFieldName = $this->findIdKey(self::ENTITY_ID_KEY, $structure);
 
-        foreach ($iterator as $key => $row) {
+        foreach ($iterator as $row) {
             if (is_array($row[0]) && is_array($row[1])) {
                 return $this->canMerge($row[0], $row[1], $structure);
             }
-            if (!empty($secondRow[$idFieldName])) {
-                return true;
-            } else {
+            if (isset($secondRow[$idFieldName])) {
+                if (!empty($secondRow[$idFieldName])) {
+                    return true;
+                }
+
                 return false;
             }
+
+            foreach ($secondRow as $rowKey => $rowValue) {
+                if (is_array($rowValue)) {
+                    return false;
+                }
+                if (!empty($firstRow[$rowKey]) && !empty($rowValue)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         return false;
+    }
+
+    private function validateExplodedSubentity(
+        string $subEntityParentKeyValue,
+        ?string $parentId,
+        array $uniqueSubEntities,
+        int $innerCounter
+    ): bool {
+        $isValid = false;
+        if ($parentId) { // trying to validate based on child-parent relation
+            if ($subEntityParentKeyValue !== $parentId) {
+                return false;
+            }
+            $isValid = true;
+        }
+
+        return !(!$isValid && !empty($uniqueSubEntities) // trying to validate based on parent keys order
+            && $subEntityParentKeyValue !== $uniqueSubEntities[$innerCounter]);
     }
 
     private function getSubStructure(array $structure, string $key)

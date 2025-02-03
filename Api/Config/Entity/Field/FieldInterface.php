@@ -123,7 +123,7 @@ interface FieldInterface
 
     /**
      * @param bool $remove
-     * @return $this
+     * @return void
      */
     public function setRemove($remove);
 

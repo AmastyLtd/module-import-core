@@ -66,8 +66,6 @@
                     <item name="labelsDecoration" xsi:type="boolean">true</item>
                     <item name="levelsVisibility" xsi:type="number">0</item>
                     <item name="filterOptions" xsi:type="boolean">true</item>
-                    <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
-                    <item name="optgroupTmpl" xsi:type="string">ui/grid/filters/elements/ui-select-optgroup</item>
                     <item name="multiple" xsi:type="boolean">false</item>
                     <item name="disableLabel" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">select</item>

@@ -40,7 +40,13 @@
                     <comment><![CDATA[Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="no_memory_limit" translate="label comment" type="select" sortOrder="10" showInDefault="1"
+                <field id="process_status_check_mode" type="select" translate="label comment" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Process Status Check Mode</label>
+                    <comment><![CDATA[If you encounter issues with tracking process status and unexpected errors during import or export in a multi-node environment, please select the 'Statuses' option in this setting.]]></comment>
+                    <source_model>Amasty\ImportExportCore\Model\OptionSource\ProcessStatusCheckMode</source_model>
+                    <config_path>amasty_importexport/advanced/process_status_check_mode</config_path>
+                </field>
+                <field id="no_memory_limit" translate="label comment" type="select" sortOrder="30" showInDefault="1"
                        showInWebsite="0" showInStore="0">
                     <label>Enable Import without Memory Limit</label>
                     <comment><![CDATA[Enable this setting if import process terminates because of the memory limit exceed.]]></comment>

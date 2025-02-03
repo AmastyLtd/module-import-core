@@ -12,7 +12,8 @@ define([
             links: {
                 select_value: '${ $.provider }:${ $.dataScope }.select_value',
                 eavEntityType: '${ $.provider }:${ $.dataScope }.eavEntityType',
-                optionSource: '${ $.provider }:${ $.dataScope }.optionSource'
+                optionSource: '${ $.provider }:${ $.dataScope }.optionSource',
+                identity: '${ $.provider }:${ $.dataScope }.identity'
             },
             listens: {
                 select_value: 'getModifierTypeSelected',
@@ -40,7 +41,8 @@ define([
                 'code',
                 'selectedType',
                 'selectedOption',
-                'optionSource'
+                'optionSource',
+                'identity'
             ]);
 
             return this;
@@ -88,6 +90,7 @@ define([
             this.childComponent = this.modifierConfig[option.value].childComponent || null;
             this.eavEntityType(this.selectedOption().eavEntityType);
             this.optionSource(this.selectedOption().optionSource);
+            this.identity(this.selectedOption().identity);
 
             if (this.childComponent && this.childTemplate) {
                 this.renderFields();

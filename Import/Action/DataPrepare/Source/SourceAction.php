@@ -98,7 +98,9 @@ class SourceAction implements ActionInterface
         }
 
         if (empty($data)) {
-            $importProcess->addErrorMessage((string)__('Empty data batch has been read.'));
+            $importProcess->addErrorMessage((string)__('Empty data batch has been read. Please ensure that'
+                . ' the file is not empty, contains root entity identifiers, and that the file structure aligns'
+                . ' with the import profile configuration.'));
         }
 
         $importProcess->setData($data);

@@ -235,7 +235,7 @@ class Reader implements SourceReaderInterface
         } while ($this->isNextRowValidForMergeProcessing());
     }
 
-    private function clearNextRowCache()
+    private function clearNextRowCache(): void
     {
         $this->nextRow = null;
     }
@@ -250,6 +250,26 @@ class Reader implements SourceReaderInterface
             $this->headerStructure,
             $this->nextRow
         );
+
+        return $this->isValidForMergeProcessing($row);
+    }
+
+    /**
+     * Checks if row is potential main entity or extension of previous entity
+     * @param array $row entity row for validation
+     * @return bool
+     */
+    private function isValidForMergeProcessing(array $row): bool
+    {
+        if (empty($row)) {
+            return false;
+        }
+
+        $firstItem = $row[array_key_first($row)];
+        if (is_array($firstItem)) { // entity doesn't have fields, only subentities
+            return false;
+        }
+
         foreach ($row as $value) {
             if (!is_array($value) && !empty($value)) {
                 return false;

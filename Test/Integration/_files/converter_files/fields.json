@@ -161,6 +161,11 @@
                                     "name": "custom2-test-string",
                                     "xsi:type": "string",
                                     "value": "custom2-test-string"
+                                },
+                                "preselected": {
+                                    "name": "preselected",
+                                    "xsi:type": "boolean",
+                                    "value": true
                                 }
                             }
                         }

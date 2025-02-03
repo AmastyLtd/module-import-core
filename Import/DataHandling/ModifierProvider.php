@@ -180,6 +180,10 @@ class ModifierProvider
                         'optionSource' => $this->findArgumentByName(
                             $action->getConfigClass()->getArguments(),
                             ActionConfigBuilder::OPTION_SOURCE
+                        ),
+                        'identity' => $this->findArgumentByName(
+                            $action->getConfigClass()->getArguments(),
+                            ActionConfigBuilder::IDENTITY
                         )
                     ];
                 }
@@ -212,6 +216,10 @@ class ModifierProvider
                         'optionSource' => $this->findArgumentByName(
                             $action->getConfigClass()->getArguments(),
                             ActionConfigBuilder::OPTION_SOURCE
+                        ),
+                        'identity' => $this->findArgumentByName(
+                            $action->getConfigClass()->getArguments(),
+                            ActionConfigBuilder::IDENTITY
                         )
                     ];
                 }

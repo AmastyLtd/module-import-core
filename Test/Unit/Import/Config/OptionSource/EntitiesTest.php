@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Amasty\ImportCore\Test\Unit\Import\Config\OptionSource;
 
 use Amasty\ImportCore\Api\Config\EntityConfigInterface;
+use Amasty\ImportCore\Import\Config\DemoEntitiesPool;
 use Amasty\ImportCore\Import\Config\EntityConfigProvider;
 use Amasty\ImportCore\Import\Config\OptionSource\Entities;
 use Amasty\ImportCore\Import\Utils\Hash;
@@ -37,13 +38,20 @@ class EntitiesTest extends TestCase
      */
     private $hashMock;
 
+    /**
+     * @var DemoEntitiesPool|MockObject
+     */
+    private $demoEntitiesPoolMock;
+
     public function setUp(): void
     {
         $this->entityConfigProviderMock = $this->createMock(EntityConfigProvider::class);
         $this->hashMock = $this->createMock(Hash::class);
+        $this->demoEntitiesPoolMock = $this->createMock(DemoEntitiesPool::class);
         $this->entities = new Entities(
             $this->entityConfigProviderMock,
-            $this->hashMock
+            $this->hashMock,
+            $this->demoEntitiesPoolMock
         );
     }
 

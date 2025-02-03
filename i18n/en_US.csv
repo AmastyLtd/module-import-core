@@ -11,18 +11,20 @@ Import,Import
 "The data preparation is completed.","The data preparation is completed."
 "The data is being filtered.","The data is being filtered."
 "The data is being mapped.","The data is being mapped."
-"Empty data batch has been read.","Empty data batch has been read."
+"Empty data batch has been read. Please ensure that the file is not empty, contains root entity identifiers, and that the file structure aligns with the import profile configuration.","Empty data batch has been read. Please ensure that the file is not empty, contains root entity identifiers, and that the file structure aligns with the import profile configuration."
 "The data is being read.","The data is being read."
-"There is entity identifier duplicated in the file.","There is entity identifier duplicated in the file."
 "The data is being validated.","The data is being validated."
+"There is entity identifier duplicated in the file - %1","There is entity identifier duplicated in the file - %1"
 "Started importing ""%1"" with ""%2"" behavior.","Started importing ""%1"" with ""%2"" behavior."
 "The data has been imported.","The data has been imported."
 "No entity metadata or entity table found.","No entity metadata or entity table found."
 "Entity ""%1"" already exists.","Entity ""%1"" already exists."
 "Fields Class %1 doesn't implement %2 interface","Fields Class %1 doesn't implement %2 interface"
 Append,Append
+"Attribute Set Name to Set ID","Attribute Set Name to Set ID"
 Capitalize,Capitalize
 "Capitalize Each Word","Capitalize Each Word"
+"Stock Name to Stock Id","Stock Name to Stock Id"
 "Category Names Path To Entity Id","Category Names Path To Entity Id"
 "Create New Attribute Value","Create New Attribute Value"
 "Convert group_code to group_id","Convert group_code to group_id"
@@ -46,6 +48,7 @@ Plus,Plus
 "Round To","Round To"
 Truncate,Truncate
 Prepend,Prepend
+"Product SKU To Product ID","Product SKU To Product ID"
 Replace,Replace
 "Replace First","Replace First"
 "Store Code to Store Id","Store Code to Store Id"
@@ -92,7 +95,7 @@ Enabled,Enabled
 "Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source.","Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source."
 "Please Select...","Please Select..."
 "Images File Directory","Images File Directory"
-"For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.","For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated."
+"For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.<br />Please, note that if you import images using links, images are temporarily stored in the Images File Directory during the import process, so this field should be filled in.","For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.<br />Please, note that if you import images using links, images are temporarily stored in the Images File Directory during the import process, so this field should be filled in."
 "Wrong file resolver form class: %1","Wrong file resolver form class: %1"
 Filter,Filter
 "Only those fields that are included into mapping can be used for filtering.","Only those fields that are included into mapping can be used for filtering."
@@ -110,6 +113,7 @@ Filter,Filter
 "%1 entity validation failed:","%1 entity validation failed:"
 "There appears to be no records to import. Please check your filtering conditions.","There appears to be no records to import. Please check your filtering conditions."
 "As a result of filtering, the following line numbers were skipped: %1.","As a result of filtering, the following line numbers were skipped: %1."
+"The system process failed. For an error details please make sure that Debug mode is enabled and see %1","The system process failed. For an error details please make sure that Debug mode is enabled and see %1"
 "Something went wrong while import. Please review logs","Something went wrong while import. Please review logs"
 "Something went wrong while import","Something went wrong while import"
 "Stop On Error","Stop On Error"
@@ -144,7 +148,6 @@ Filter,Filter
 "Unable to remove batch. Error: %1","Unable to remove batch. Error: %1"
 "Process Started","Process Started"
 "The import process failed to launch. Please, check your PHP executable path or see log for more details.","The import process failed to launch. Please, check your PHP executable path or see log for more details."
-"The system process failed. For an error details please make sure that Debug mode is enabled and see %1","The system process failed. For an error details please make sure that Debug mode is enabled and see %1"
 "Entity with specified ID ""%1"" not found.","Entity with specified ID ""%1"" not found."
 Cancel,Cancel
 From,From
@@ -170,6 +173,8 @@ Yes,Yes
 Advanced,Advanced
 "Enable Debug Mode","Enable Debug Mode"
 "Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log.","Enabling this setting will allow detecting errors and display detailed information about them including server errors. Also useful error information can be found in var/log/amasty_import_debug.log."
+"Process Status Check Mode","Process Status Check Mode"
+"If you encounter issues with tracking process status and unexpected errors during import or export in a multi-node environment, please select the 'Statuses' option in this setting.","If you encounter issues with tracking process status and unexpected errors during import or export in a multi-node environment, please select the 'Statuses' option in this setting."
 "Enable Import without Memory Limit","Enable Import without Memory Limit"
 "Enable this setting if import process terminates because of the memory limit exceed.","Enable this setting if import process terminates because of the memory limit exceed."
 "System Settings","System Settings"

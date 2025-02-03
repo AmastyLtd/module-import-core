@@ -22,6 +22,7 @@ use Amasty\ImportCore\Exception\JobTerminatedException;
 use Amasty\ImportCore\Import\Config\EntityConfigProvider;
 use Amasty\ImportCore\Import\Parallelization\ResultMerger;
 use Amasty\ImportCore\Model\ConfigProvider;
+use Amasty\ImportCore\Model\Process\Process;
 use Amasty\ImportCore\Model\Process\ProcessRepository;
 use Amasty\ImportExportCore\Parallelization\JobManager;
 use Amasty\ImportExportCore\Parallelization\JobManagerFactory;
@@ -129,6 +130,7 @@ class ImportStrategy
         ProfileConfigInterface $profileConfig,
         string $processIdentity
     ): ImportResultInterface {
+        $this->processRepository->updateProcessStatusByIdentity($processIdentity, Process::STATUS_STARTING);
         if ($profileConfig->isUseMultiProcess() && JobManager::isAvailable()) {
             $importProcess = null;
             /** @var JobManager $jobManager */
@@ -153,10 +155,8 @@ class ImportStrategy
                 'jobManager' => $this->jobManager
             ]
         );
-
-        $this->eventManager->dispatch('amimport_before_run', ['importProcess' => $importProcess]);
         $this->registerErrorCatching($importProcess);
-
+        $this->eventManager->dispatch('amimport_before_run', ['importProcess' => $importProcess]);
         $importResult = $importProcess->getImportResult();
 
         foreach ($this->getSortedActionGroups() as $groupName => $actionsGroup) {
@@ -298,9 +298,7 @@ class ImportStrategy
                     continue;
                 }
             }
-            unset($action['class']);
-            unset($action['sortOrder']);
-            unset($action['entities']);
+            unset($action['class'], $action['sortOrder'], $action['entities']);
 
             if (!isset($result[$sortOrder])) {
                 $result[$sortOrder] = [];
@@ -358,21 +356,45 @@ class ImportStrategy
     {
         //phpcs:ignore
         \register_shutdown_function(function () use ($importProcess) {
-            if (error_get_last() === null || (error_get_last()['type'] ?? null) != 1) {
+            $currentStatus = $this->processRepository->checkProcessStatus($importProcess->getIdentity());
+            if ($currentStatus === Process::STATUS_SUCCESS || $importProcess->isChildProcess()) {
                 return;
             }
-            if ($this->appState->getMode() === State::MODE_PRODUCTION) {
-                $this->logger->critical(error_get_last()['message']);
-                $importProcess->addCriticalMessage(
-                    (string)__('Something went wrong while import. Please review logs')
-                );
-            } else {
-                $importProcess->addCriticalMessage(
-                    error_get_last()['message'] ?? __('Something went wrong while import')
-                );
+            $errorMsg = __(
+                'The system process failed. For an error details please make sure that Debug mode is enabled '
+                . 'and see %1',
+                ConfigProvider::DEBUG_LOG_PATH
+            )->render();
+
+            if ($currentStatus === Process::STATUS_FAILED && $importProcess->getImportResult() !== null) {
+                $hasErrorMessage = false;
+                foreach ($importProcess->getImportResult()->getMessages() as $message) {
+                    if (in_array( //error was already processed
+                        $message['type'],
+                        [ImportResultInterface::MESSAGE_CRITICAL, ImportResultInterface::MESSAGE_ERROR],
+                        true
+                    )) {
+                        $hasErrorMessage = true;
+                        break;
+                    }
+                }
+                if ($hasErrorMessage) {
+                    $importProcess->getImportResult()->terminateImport(true);
+                    $this->finalizeProcess($importProcess);
+
+                    return;
+                }
+
+                if (error_get_last() !== null && (error_get_last()['type'] ?? null) === 1) {
+                    if ($this->appState->getMode() === State::MODE_PRODUCTION) {
+                        $errorMsg = __('Something went wrong while import. Please review logs')->render();
+                        $this->logger->critical(error_get_last()['message'] ?? '');
+                    } else {
+                        $errorMsg = error_get_last()['message'] ?? __('Something went wrong while import')->render();
+                    }
+                }
             }
-            $importProcess->getImportResult()->terminateImport(true);
-            $this->finalizeProcess($importProcess);
+            $this->processRepository->markAsFailed($importProcess->getIdentity(), $errorMsg);
         });
 
         return $this;

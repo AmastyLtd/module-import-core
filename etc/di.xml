@@ -298,6 +298,7 @@
                     <item translatable="true" name="name" xsi:type="string">XML</item>
                     <item name="mimeTypes" xsi:type="array">
                         <item name="0" xsi:type="string">text/xml</item>
+                        <item name="1" xsi:type="string">application/xml</item>
                     </item>
                 </item>
             </argument>

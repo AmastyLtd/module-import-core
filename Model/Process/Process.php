@@ -39,6 +39,7 @@ class Process extends AbstractModel
     public const IDENTITY = 'identity';
 
     public const STATUS_PENDING = 'pending';
+    public const STATUS_STARTING = 'starting';
     public const STATUS_RUNNING = 'running';
     public const STATUS_SUCCESS = 'success';
     public const STATUS_FAILED = 'failed';

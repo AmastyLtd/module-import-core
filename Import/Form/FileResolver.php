@@ -135,7 +135,10 @@ class FileResolver implements FormInterface
                                             . 'You can also import images using links. To do this please '
                                             . 'specify the links to the images in the import file. '
                                             . 'Please note that when you import an image with the same name '
-                                            . 'that already exists in the system then the image will be updated.')
+                                            . 'that already exists in the system then the image will be updated.<br />'
+                                            . 'Please, note that if you import images using links, images are'
+                                            . ' temporarily stored in the Images File Directory during the import'
+                                            . ' process, so this field should be filled in.')
                                         ]
                                     ]
                                 ]

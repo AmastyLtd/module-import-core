@@ -19,6 +19,8 @@ class ConfigProvider
     public const DEBUG_MODE = 'advanced/debug';
     public const NO_MEMORY_LIMIT = 'advanced/no_memory_limit';
 
+    public const PROCESS_STATUS_CHECK_MODE = 'amasty_importexport/advanced/process_status_check_mode';
+
     private const PATH_PREFIX = 'amasty_import/';
     public const DEBUG_LOG_PATH = 'var/log/amasty_import_debug.log';
 
@@ -45,6 +47,11 @@ class ConfigProvider
     public function isDebugEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::PATH_PREFIX . self::DEBUG_MODE);
+    }
+
+    public function getProcessStatusCheckMode(): int
+    {
+        return (int)$this->scopeConfig->getValue(self::PROCESS_STATUS_CHECK_MODE);
     }
 
     public function isNoMemoryLimit(): bool

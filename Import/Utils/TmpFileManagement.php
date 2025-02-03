@@ -61,10 +61,13 @@ class TmpFileManagement
         return $tmpDir;
     }
 
-    public function createTempFile(DirectoryWriteInterface $directory): string
+    public function createTempFile(DirectoryWriteInterface $directory, string $extension = ''): string
     {
         do {
             $randomName = $this->random->getRandomString(self::TEMP_FILE_NAME_LENGTH);
+            if ($extension) {
+                $randomName .= '.' . $extension;
+            }
         } while ($directory->isExist($randomName));
 
         $directory->touch($randomName);

@@ -17,4 +17,5 @@ class ActionConfigBuilder
     public const SYSTEM_ACTION = 'system';
     public const EAV_ENTITY_TYPE_CODE = 'eavEntityType';
     public const OPTION_SOURCE = 'optionSource';
+    public const IDENTITY = 'identity';
 }

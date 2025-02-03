@@ -15,10 +15,11 @@ use Amasty\ImportCore\Api\ImportProcessInterface;
 use Amasty\ImportCore\Api\Source\SourceDataStructureInterface;
 use Amasty\ImportCore\Api\Validation\RelationValidatorInterface;
 use Amasty\ImportCore\Api\Validation\RowValidatorInterface;
-use Amasty\ImportCore\Import\OptionSource\ValidationStrategy;
 use Amasty\ImportCore\Import\Source\Data\DataStructureProvider;
 use Amasty\ImportCore\Import\Source\SourceDataStructure;
 use Amasty\ImportCore\Import\Validation\CompositeValidationProvider;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 
 class ValidationAction implements ActionInterface
 {
@@ -54,18 +55,28 @@ class ValidationAction implements ActionInterface
      */
     private $dataStructure;
 
+    /**
+     * @var TerminateValidator
+     */
+    private $terminateValidator;
+
     public function __construct(
         CompositeValidationProvider $validationProvider,
-        DataStructureProvider $dataStructureProvider
+        DataStructureProvider $dataStructureProvider,
+        TerminateValidator $terminateValidator = null
     ) {
         $this->validationProvider = $validationProvider;
         $this->dataStructureProvider = $dataStructureProvider;
+        $this->terminateValidator = $terminateValidator
+            ?? ObjectManager::getInstance()->get(TerminateValidator::class);
     }
 
     public function execute(ImportProcessInterface $importProcess): void
     {
-        if (!$this->checkUniqueOfIdField($importProcess)) {
-            $importProcess->addErrorMessage(__('There is entity identifier duplicated in the file.')->render());
+        try {
+            $this->checkUniqueOfIdField($importProcess);
+        } catch (LocalizedException $e) {
+            $importProcess->addErrorMessage($e->getMessage());
             $importProcess->getImportResult()->terminateImport(true);
 
             return;
@@ -107,7 +118,7 @@ class ValidationAction implements ActionInterface
                 unset($importData[$key]);
             }
 
-            if (!$isRowValid && $this->isNeedToTerminate($importProcess)) {
+            if (!$isRowValid && $this->terminateValidator->isNeedToTerminate($importProcess)) {
                 $importProcess->getImportResult()->terminateImport(true);
 
                 return;
@@ -135,28 +146,14 @@ class ValidationAction implements ActionInterface
                 return true; //validation of ID field existence will be checked in validators
             }
             if (in_array($row[$idFieldName], $uniqueIdentifiers)) {
-                return false;
+                throw new LocalizedException(
+                    __('There is entity identifier duplicated in the file - %1', $row[$idFieldName])
+                );
             }
             $uniqueIdentifiers[] = $row[$idFieldName];
         }
 
         return true;
-    }
-
-    private function isNeedToTerminate(ImportProcessInterface $importProcess): bool
-    {
-        $importProcess->increaseErrorQuantity();
-        if ($importProcess->getProfileConfig()->getValidationStrategy() ==
-            ValidationStrategy::STOP_ON_ERROR
-        ) {
-            return true;
-        } elseif ($importProcess->getErrorQuantity() >=
-            $importProcess->getProfileConfig()->getAllowErrorsCount()
-        ) {
-            return true;
-        }
-
-        return false;
     }
 
     public function initialize(ImportProcessInterface $importProcess): void

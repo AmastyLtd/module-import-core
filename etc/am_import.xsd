@@ -558,6 +558,17 @@
                     <xs:attribute name="system" default="false" type="xs:boolean" />
                 </xs:complexType>
             </xs:element>
+            <xs:element name="attributeSetLabel2AttributeSetId" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="arguments" type="argumentsType" minOccurs="0" />
+                    </xs:sequence>
+                    <xs:attribute name="class" default="Amasty\ImportCore\Import\DataHandling\FieldModifier\Attribute\SetName2SetId" type="modelName" />
+                    <xs:attribute name="name" default="Convert Attribute Set Label to Attribute Set Id" />
+                    <xs:attribute name="preselected" type="xs:boolean" default="false"/>
+                    <xs:attribute name="apply" default="beforeValidate" type="actionApply" />
+                </xs:complexType>
+            </xs:element>
             <xs:element name="custom" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:sequence>

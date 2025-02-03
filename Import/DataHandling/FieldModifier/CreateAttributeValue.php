@@ -119,6 +119,7 @@ class CreateAttributeValue extends AbstractModifier implements FieldModifierInte
                     $result[$map[$option]] = $option;
                 } elseif ($newOption = $this->createNewOption($attribute, $option)) {
                     $result[$newOption] = $option;
+                    $this->map[$option] = $newOption;
                 }
             }
 
@@ -130,7 +131,8 @@ class CreateAttributeValue extends AbstractModifier implements FieldModifierInte
             && ($attribute = $this->getEavAttribute())
             && !in_array($attribute->getFrontendInput(), $this->disallowedFrontendInput)
         ) {
-            $this->createNewOption($attribute, $value);
+            $newOption = $this->createNewOption($attribute, $value);
+            $this->map[$value] = $newOption;
         }
 
         return $value;

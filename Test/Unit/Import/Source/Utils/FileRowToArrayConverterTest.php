@@ -53,7 +53,7 @@ class FileRowToArrayConverterTest extends TestCase
         );
     }
 
-    public function testConvertRowToHeaderStructure()
+    public function testConvertRowToHeaderStructure(): void
     {
         $rowData = ['1', '10', '1', '1', 'test', '1', '1', '1', '1', '1', 'test'];
         $expected = [
@@ -90,9 +90,9 @@ class FileRowToArrayConverterTest extends TestCase
     /**
      * @dataProvider formatMergedSubEntitiesDataProvider
      */
-    public function testFormatMergedSubEntities($rowData, $expected)
+    public function testFormatMergedSubEntities(array $rowData, array $structure, array $expected): void
     {
-        $result = $this->converter->formatMergedSubEntities($rowData, self::TEST_STRUCTURE, ',');
+        $result = $this->converter->formatMergedSubEntities($rowData, $structure, ',');
 
         $this->assertEquals($expected, $result);
     }
@@ -100,16 +100,16 @@ class FileRowToArrayConverterTest extends TestCase
     /**
      * @dataProvider mergeRowsDataProvider
      */
-    public function testMergeRows($firstRow, $secondRow, $structure, $expected)
+    public function testMergeRows(array $firstRow, array $secondRow, array $structure, array $expected): void
     {
         $result = $this->converter->mergeRows($firstRow, $secondRow, $structure);
 
         $this->assertEquals($expected, $result);
     }
 
-    public function formatMergedSubEntitiesDataProvider()
+    private function formatMergedSubEntitiesDataProvider(): array
     {
-        $expected1 = [
+        $rowWithPk = [
             'entity_id' => '1',
             'base_grand_total' => '10',
             'sales_order_item' => [
@@ -134,7 +134,29 @@ class FileRowToArrayConverterTest extends TestCase
                 ]
             ]
         ];
-        $formattedRow = [
+        $rowWithoutPk = [
+            'entity_id' => '1',
+            'base_grand_total' => '10',
+            'sales_order_item' => [
+                [
+                    'order_id' => '1',
+                    'sku' => 'test'
+                ]
+            ],
+            'sales_shipment' => [
+                [
+                    'order_id' => '1',
+                    'total_qty' => '1',
+                    'sales_shipment_item' => [
+                        [
+                            'parent_id' => '1',
+                            'sku' => 'test'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $rowMergedWithPk = [
             'entity_id' => '1',
             'base_grand_total' => '10',
             'sales_order_item' => [
@@ -159,7 +181,28 @@ class FileRowToArrayConverterTest extends TestCase
                 ]
             ]
         ];
-        $expected2 = [
+        $rowMergedWithoutPk = [
+            'base_grand_total' => '10',
+            'sales_order_item' => [
+                [
+                    'order_id' => '1,1',
+                    'sku' => 'test,test2'
+                ]
+            ],
+            'sales_shipment' => [
+                [
+                    'order_id' => '1,1',
+                    'total_qty' => '1,2',
+                    'sales_shipment_item' => [
+                        [
+                            'parent_id' => '1,1,2,2',
+                            'sku' => 'test,test2,test,test2'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $expectedMergedRowWithPk = [
             'entity_id' => '1',
             'base_grand_total' => '10',
             'sales_order_item' => [
@@ -211,23 +254,113 @@ class FileRowToArrayConverterTest extends TestCase
                 ]
             ]
         ];
+        $expectedMergedRowWithoutPk = [
+            'base_grand_total' => '10',
+            'sales_order_item' => [
+                [
+                    'order_id' => '1',
+                    'sku' => 'test'
+                ],
+                [
+                    'order_id' => '1',
+                    'sku' => 'test2'
+                ]
+            ],
+            'sales_shipment' => [
+                [
+                    'order_id' => '1',
+                    'total_qty' => '1',
+                    'sales_shipment_item' => [
+                        [
+                            'parent_id' => '1',
+                            'sku' => 'test'
+                        ],
+                        [
+                            'parent_id' => '1',
+                            'sku' => 'test2'
+                        ]
+                    ]
+                ],
+                [
+                    'order_id' => '1',
+                    'total_qty' => '2',
+                    'sales_shipment_item' => [
+                        [
+                            'parent_id' => '2',
+                            'sku' => 'test'
+                        ],
+                        [
+                            'parent_id' => '2',
+                            'sku' => 'test2'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $structureWithPk = [
+            'entity_id' => FileRowToArrayConverter::ENTITY_ID_KEY,
+            'base_grand_total' => '',
+            'sales_order_item' => [
+                'item_id' => FileRowToArrayConverter::ENTITY_ID_KEY,
+                'order_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                'sku' => ''
+            ],
+            'sales_shipment' => [
+                'entity_id' => FileRowToArrayConverter::ENTITY_ID_KEY,
+                'order_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                'total_qty' => '',
+                'sales_shipment_item' => [
+                    'entity_id' => FileRowToArrayConverter::ENTITY_ID_KEY,
+                    'parent_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                    'sku' => ''
+                ]
+            ]
+        ];
+        $structureWithoutPk = [
+            'entity_id' => FileRowToArrayConverter::ENTITY_ID_KEY,
+            'base_grand_total' => '',
+            'sales_order_item' => [
+                'order_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                'sku' => ''
+            ],
+            'sales_shipment' => [
+                'order_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                'total_qty' => '',
+                'sales_shipment_item' => [
+                    'parent_id' => FileRowToArrayConverter::PARENT_ID_KEY,
+                    'sku' => ''
+                ]
+            ]
+        ];
 
         return [
-            [//case 1: without merged subentites
-                $expected1,
-                $expected1
+            'without merged subentites' => [
+                $rowWithPk,
+                $structureWithPk,
+                $rowWithPk
             ],
-            [//case 2: with merged subentites
-                $formattedRow,
-                $expected2
+            'without merged subentities no PK' => [
+                $rowWithoutPk,
+                $structureWithoutPk,
+                $rowWithoutPk
+            ],
+            'with merged subentites' => [
+                $rowMergedWithPk,
+                $structureWithPk,
+                $expectedMergedRowWithPk
+            ],
+            'with merged subentites no PK' => [
+                $rowMergedWithoutPk,
+                $structureWithoutPk,
+                $expectedMergedRowWithoutPk
             ]
         ];
     }
 
-    public function mergeRowsDataProvider()
+    private function mergeRowsDataProvider(): array
     {
         return [
-            [ // merge rows with nesting = 3
+            'merge rows with nesting = 3' => [
                 [
                     'field' => '1',
                     'subentity2' => [
@@ -280,7 +413,7 @@ class FileRowToArrayConverterTest extends TestCase
                     ]
                 ]
             ],
-            [ // merge rows with nesting = 4
+            'merge rows with nesting = 4' => [
                 [
                     'field' => '1',
                     'subentity2' => [
@@ -345,7 +478,7 @@ class FileRowToArrayConverterTest extends TestCase
                         ]
                     ]
                 ],
-                [
+                'merge rows with nesting = 3' => [
                     'field' => '1',
                     'subentity2' => [
                         [
@@ -374,6 +507,146 @@ class FileRowToArrayConverterTest extends TestCase
                                             'field' => '2'
                                         ]
                                     ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'merge rows without subentities ID Field' => [
+                [
+                    'field' => '1',
+                    'subentity2' => [
+                        [
+                            'field' => '1',
+                            'subentity3' => [
+                                [
+                                    'field' => '1',
+                                    'subentity4' => [
+                                        [
+                                            'field' => '1'
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'field' => '1',
+                                    'subentity4' => [
+                                        [
+                                            'field' => '2'
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '',
+                    'subentity2' => [
+                        [
+                            'field' => '',
+                            'subentity3' => [
+                                [
+                                    'field' => '',
+                                    'subentity4' => [
+                                        [
+                                            'field' => '2'
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '1',
+                    'subentity2' => [
+                        'field' => '2',
+                        'subentity3' => [
+                            'field' => '2',
+                            'subentity4' => [
+                                'field' => '2'
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '1',
+                    'subentity2' => [
+                        [
+                            'field' => '1',
+                            'subentity3' => [
+                                [
+                                    'field' => '1',
+                                    'subentity4' => [
+                                        [
+                                            'field' => '1'
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'field' => '1',
+                                    'subentity4' => [
+                                        [
+                                            'field' => '2'
+                                        ],
+                                        [
+                                            'field' => '2'
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'no pk main field' => [
+                [
+                    'field' => '1',
+                    'subentity2' => [
+                        [
+                            'field' => '1',
+                            'subentity3' => [
+                                [
+                                    'field' => '1'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '',
+                    'subentity2' => [
+                        [
+                            'field' => '',
+                            'subentity3' => [
+                                [
+                                    'field' => '2'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '',
+                    'subentity2' => [
+                        'field' => '',
+                        'subentity3' => [
+                            'field' => ''
+                        ]
+                    ]
+                ],
+                [
+                    'field' => '1',
+                    'subentity2' => [
+                        [
+                            'field' => '1',
+                            'subentity3' => [
+                                [
+                                    'field' => '1'
+                                ],
+                                [
+                                    'field' => '2'
                                 ]
                             ]
                         ]

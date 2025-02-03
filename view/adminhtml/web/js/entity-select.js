@@ -1,5 +1,5 @@
 define([
-    'Magento_Ui/js/form/element/ui-select'
+    'Amasty_Base/js/form/element/ui-promotion-select'
 ], function (Select) {
     'use strict';
 

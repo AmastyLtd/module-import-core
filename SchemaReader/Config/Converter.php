@@ -817,7 +817,11 @@ class Converter implements ConverterInterface
 
             $arguments = $this->getClassArguments($action);
             if ($arguments) {
-                $result[count($result) - 1]['arguments'] = $arguments;
+                //phpcs:ignore Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
+                $result[count($result) - 1]['arguments'] = array_merge(
+                    $result[count($result) - 1]['arguments'] ?? [],
+                    $arguments
+                );
             }
         }
 
