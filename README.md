@@ -131,3 +131,22 @@ If you need a specific entity, but with the automation options, you can purchase
 <h2>Troubleshooting </h2>
 <p><i>Have any questions? Feel free to <a href="https://amasty.com/contacts/">contact us</a>!</i></p> 
 <p><i>Want us to develop a custom integration? <a href="https://amasty.com/magento-integration-service.html">Find the details here</a>.</i></p>  
+
+<h2>Other Amasty extensions</h2>
+-> <a href="https://amasty.com/store-credit-and-refund-for-magento-2.html" target="_blank">Store Credit & Refund for Magento 2</a><br>
+-> <a href="https://amasty.com/special-promotions-pro-for-magento-2.html" target="_blank">Special Promotions for Magento 2</a><br>
+-> <a href="https://amasty.com/special-promotions-for-magento-2.html" target="_blank">Special Promotions Pro for Magento 2</a><br>
+-> <a href="https://amasty.com/social-login-for-magento-2.html" target="_blank">Social Login for Magento 2</a><br>
+-> <a href="https://amasty.com/smtp-email-settings-for-magento-2.html" target="_blank">SMTP Email Settings for Magento 2</a><br>
+-> <a href="https://amasty.com/shop-by-brand-for-magento-2.html" target="_blank">Shop by Brand for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-table-rates-for-magento-2.html" target="_blank">Shipping Table Rates for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-suite-for-magento-2.html" target="_blank">Shipping Suite for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-rules-for-magento-2.html" target="_blank">Shipping Rules for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-restrictions-for-magento-2.html" target="_blank">Shipping Restrictions for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-payment-by-customer-group-for-magento-2.html" target="_blank">Shipping & Payment By Customer Groups for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-cost-calculator-for-magento-2.html" target="_blank">Shipping Cost Calculator for Magento 2</a><br>
+-> <a href="https://amasty.com/seo-toolkit-for-magento-2.html" target="_blank">SEO Toolkit for Magento 2</a><br>
+-> <a href="https://amasty.com/security-suite-for-magento-2.html" target="_blank">Security Suite for Magento 2</a><br>
+-> <a href="https://amasty.com/shipping-table-rates.html" target="_blank">Shipping Table Rates</a><br>
+-> <a href="https://amasty.com/search-pro.html" target="_blank">Search Pro</a><br>
+-> <a href="https://amasty.com/product-labels.html" target="_blank">Product Labels</a><br>
