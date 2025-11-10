@@ -36,7 +36,7 @@ class Table extends TableBehavior implements BehaviorInterface
         BehaviorResultInterfaceFactory $behaviorResultFactory,
         DuplicateFieldChecker $duplicateFieldChecker,
         array $config,
-        UniqueConstraintsProcessor $uniqueConstraintsProcessor = null
+        ?UniqueConstraintsProcessor $uniqueConstraintsProcessor = null
     ) {
         parent::__construct(
             $objectManager,

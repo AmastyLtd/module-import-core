@@ -19,6 +19,11 @@
 //  ----------------------------------------------
 
 & when (@media-common = true) {
+    //  Overriding magento behavior with menu titles hide for 1 column
+    .item-importcore .submenu-group-title {
+        display: block !important;
+    }
+
     .amimportcore-dynamic-rows {
         //  Override magento styles start
         & {
@@ -481,6 +486,12 @@
         &:after,
         &:before {
             left: 10px;
+        }
+    }
+
+    .admin__fieldset {
+        .fieldset-wrapper + .admin__field.amimportcore-field-upload {
+            margin-top: 3rem;
         }
     }
 }

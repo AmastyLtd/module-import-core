@@ -67,7 +67,7 @@ class EavEntityManager extends EavEntityManagerBehavior implements BehaviorInter
      * @param array|null $pattern
      * @return array
      */
-    private function fillNull(array $rows, array $pattern = null): array
+    private function fillNull(array $rows, ?array $pattern = null): array
     {
         $attributes = $this->attributeLoader->getAttributes(
             $this->entityType,

@@ -112,6 +112,7 @@ class Xml implements EntitySourceInterface
             $entity->setGroup($entityConfig['group'] ?? null);
             $entity->setDescription($entityConfig['description'] ?? null);
             $entity->setHiddenInLists(!empty($entityConfig['isHidden']));
+            $entity->setAllowEmptyImport(!empty($entityConfig['allowEmptyImport']));
             if (!empty($entityConfig['behaviors'])) {
                 $behaviors = [];
                 foreach ($entityConfig['behaviors'] as $code => $behaviorConfig) {

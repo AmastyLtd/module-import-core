@@ -46,6 +46,7 @@ class DataStructureBuilder
             SourceDataStructure::ENTITY_CODE => $entityConfig->getEntityCode(),
             SourceDataStructure::FIELDS => $this->getFieldNames($profileConfig->getEntitiesConfig()),
             SourceDataStructure::FIELDS_MAP => $this->getFieldsMap($profileConfig->getEntitiesConfig()),
+            SourceDataStructure::IS_ALLOW_EMPTY => $entityConfig->isAllowEmptyImport(),
             SourceDataStructure::SUB_ENTITY_STRUCTURES => $subEntityStructures,
             SourceDataStructure::ID_FIELD_NAME => $this->getIdFieldName($entityConfig)
         ];
@@ -75,12 +76,14 @@ class DataStructureBuilder
         $idField = $this->getIdFieldName($this->entityConfigProvider->get($entityCode));
 
         $map = $profileSubEntityConfig->getMap() ?: $relationConfig->getSubEntityFieldName();
+        $subEntityConfig = $this->entityConfigProvider->get($entityCode);
 
         return [
             SourceDataStructure::ENTITY_CODE => $entityCode,
             SourceDataStructure::ID_FIELD_NAME => $idField,
             SourceDataStructure::PARENT_ID_FIELD_NAME => $relationConfig->getChildFieldName(),
             SourceDataStructure::MAP => $map,
+            SourceDataStructure::IS_ALLOW_EMPTY => $subEntityConfig->isAllowEmptyImport(),
             SourceDataStructure::FIELDS => $this->getFieldNames($profileSubEntityConfig),
             SourceDataStructure::FIELDS_MAP => $this->getFieldsMap($profileSubEntityConfig),
             SourceDataStructure::SUB_ENTITY_STRUCTURES => $subEntityStructures

@@ -11,6 +11,9 @@ use Amasty\ImportCore\Api\Config\EntityConfigInterface;
 use Amasty\ImportCore\Api\Config\ProfileConfigInterface;
 use Amasty\ImportCore\Api\FileResolver\FileResolverConfigInterface;
 use Amasty\ImportCore\Api\FormInterface;
+use Amasty\ImportCore\Import\Config\EntityConfigProvider;
+use Amasty\ImportCore\Import\Config\RelationConfigProvider;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
@@ -20,19 +23,35 @@ class FileResolver implements FormInterface
     /**
      * @var FileResolverConfigInterface
      */
-    private $fileResolverConfig;
+    private FileResolverConfigInterface $fileResolverConfig;
 
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
+
+    /**
+     * @var EntityConfigProvider
+     */
+    private EntityConfigProvider $entityConfigProvider;
+
+    /**
+     * @var RelationConfigProvider
+     */
+    private RelationConfigProvider $relationConfigProvider;
 
     public function __construct(
         FileResolverConfigInterface $fileResolverConfig,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        ?EntityConfigProvider $entityConfigProvider = null,
+        ?RelationConfigProvider $relationConfigProvider = null
     ) {
         $this->fileResolverConfig = $fileResolverConfig;
         $this->objectManager = $objectManager;
+        $this->entityConfigProvider = $entityConfigProvider
+            ?: ObjectManager::getInstance()->get(EntityConfigProvider::class);
+        $this->relationConfigProvider = $relationConfigProvider
+            ?: ObjectManager::getInstance()->get(RelationConfigProvider::class);
     }
 
     public function getMeta(EntityConfigInterface $entityConfig, array $arguments = []): array
@@ -115,7 +134,7 @@ class FileResolver implements FormInterface
             }
         }
 
-        if ($arguments['useImagesFileDirectory'] ?? false) {
+        if (($arguments['useImagesFileDirectory'] ?? false) || $this->checkFileUploaderConfig($entityConfig)) {
             $imageFileDirectory = [
                 'file_config' => [
                     'children' => [
@@ -123,23 +142,23 @@ class FileResolver implements FormInterface
                             'arguments' => [
                                 'data' => [
                                     'config' => [
-                                        'label' => __('Images File Directory'),
+                                        'label' => __('Import Files Directory'),
                                         'visible' => true,
                                         'dataScope' => 'images_file_directory',
                                         'dataType' => 'text',
                                         'formElement' => 'input',
                                         'componentType' => 'input',
-                                        'tooltip' => ['description' => __('For import from file directory '
-                                            . 'please use relative path to Magento installation, '
-                                            . 'e.g. var/import.<br />'
-                                            . 'You can also import images using links. To do this please '
-                                            . 'specify the links to the images in the import file. '
-                                            . 'Please note that when you import an image with the same name '
-                                            . 'that already exists in the system then the image will be updated.<br />'
-                                            . 'Please, note that if you import images using links, images are'
-                                            . ' temporarily stored in the Images File Directory during the import'
-                                            . ' process, so this field should be filled in.')
-                                        ]
+                                        'tooltip' => ['description' => __('For import from file directory, please '
+                                            . 'use relative path to Magento installation, e.g. var/import.<br/>'
+                                            . 'You can also import files and images using links. To do this, please '
+                                            . 'specify the links to the files in the import file. Please, note that if '
+                                            . 'you import files using links, the files are temporarily stored in the '
+                                            . 'Import Files Directory during the import process, so this field should '
+                                            . 'be filled in.<br/>'
+                                            . 'Please note that when you import an image with the same '
+                                            . 'name that already exists in the system, then the image will be updated.')
+                                        ],
+                                        'additionalClasses' => 'amimportcore-field-upload'
                                     ]
                                 ]
                             ]
@@ -211,6 +230,22 @@ class FileResolver implements FormInterface
             }
 
             return $this->objectManager->create($metaClass);
+        }
+
+        return false;
+    }
+
+    private function checkFileUploaderConfig(EntityConfigInterface $entityConfig): bool
+    {
+        if ($entityConfig->getFileUploaderConfig()) {
+            return true;
+        }
+
+        foreach ($this->relationConfigProvider->get($entityConfig->getEntityCode()) as $relationConfig) {
+            $subEntityConfig = $this->entityConfigProvider->get($relationConfig->getChildEntityCode());
+            if ($this->checkFileUploaderConfig($subEntityConfig)) {
+                return true;
+            }
         }
 
         return false;

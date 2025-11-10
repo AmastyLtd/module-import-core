@@ -61,10 +61,8 @@ class ReaderTest extends TestCase
         $fileReaderProp->setAccessible(true);
         $fileReaderProp->setValue($this->reader, $fileReader);
 
-        // phpcs:ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
-        for ($i = 0; $i < count($rows); $i++) {
-            $fileReader->expects($this->at($i))->method('readCsv')->willReturn($rows[$i]);
-        }
+        $rows[] = null; //last call of readCsv
+        $fileReader->method('readCsv')->willReturn(...$rows);
         $this->setHeaderStructure($structure);
         $result = $this->reader->readRow();
         $this->assertEquals($expected, $result);
@@ -179,7 +177,6 @@ class ReaderTest extends TestCase
                 [
                     ['1', 'test', '1', '1', 'test'],
                     ['', '', '2', '1', 'test2']
-
                 ],
                 $structure1,
                 $expected1

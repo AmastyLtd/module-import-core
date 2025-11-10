@@ -72,6 +72,18 @@ interface EntityConfigInterface extends ExtensibleDataInterface
     public function setHiddenInLists($isHiddenInLists);
 
     /**
+     * @return bool
+     */
+    public function isAllowEmptyImport();
+
+    /**
+     * @param bool $isAllow
+     *
+     * @return void
+     */
+    public function setAllowEmptyImport($isAllow);
+
+    /**
      * @return \Amasty\ImportCore\Api\Config\Entity\BehaviorInterface[]
      */
     public function getBehaviors();

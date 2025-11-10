@@ -119,7 +119,7 @@ class SourceDataProcessorTest extends TestCase
                 [
                     'field' => 'value',
                     'sub_entity' => [
-                        ['sub_entity_field' => ''],
+                        ['sub_entity_field' => null],
                         ['sub_entity_field' => 'sub_entity_value']
                     ]
                 ],

@@ -67,7 +67,7 @@ class JobManager
         $this->filesystem = $filesystem;
     }
 
-    public function requestJob(ProfileConfigInterface $profileConfig, string $identity = null): JobWatcher
+    public function requestJob(ProfileConfigInterface $profileConfig, ?string $identity = null): JobWatcher
     {
         try {
             $matchingProcess = $this->processRepository->getByIdentity($identity);

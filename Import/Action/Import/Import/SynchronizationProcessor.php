@@ -94,9 +94,18 @@ class SynchronizationProcessor
                 $fieldName = $synchronizationField->getFieldName();
                 $idsMap = $this->syncIdsMapping[$synchronizationField->getEntityName()][$fieldName] ?? [];
                 foreach ($entityToUpdate as &$rowToUpdate) {
-                    if (isset($rowToUpdate[$fieldName], $idsMap[$rowToUpdate[$fieldName]])) {
+                    $id = null;
+                    if ((isset($rowToUpdate[$fieldName], $idsMap[$rowToUpdate[$fieldName]]))) {
+                        $id = $idsMap[$rowToUpdate[$fieldName]];
+                    } elseif (!empty($idsMap)) {
+                        $id = current($idsMap);
+                        if (!next($idsMap)) {
+                            end($idsMap);
+                        }
+                    }
+                    if (null !== $id) {
                         $entityUpdated = true;
-                        $rowToUpdate[$fieldName] = $idsMap[$rowToUpdate[$fieldName]];
+                        $rowToUpdate[$fieldName] = $id;
                     }
                 }
 
@@ -171,7 +180,7 @@ class SynchronizationProcessor
         $newIds = $updatedMapping = [];
 
         foreach ($row[SourceDataStructure::SUB_ENTITIES_DATA_KEY][$synchronizationEntity] as $subRow) {
-            $newIds[] = $subRow[$synchronizationField->getSynchronizationFieldName()];
+            $newIds[] = $subRow[$synchronizationField->getSynchronizationFieldName()] ?? null;
         }
 
         if (empty($newIds)) {
@@ -180,6 +189,7 @@ class SynchronizationProcessor
 
         $syncIds = &$this->syncIdsMapping[$synchronizationField->getEntityName()]
             [$synchronizationField->getFieldName()];
+        $syncIds = $syncIds ?? []; // set [] in case there are no identifiers in entities.
         foreach ($newIds as $id) {
             $updatedMapping[current($syncIds)] = $id;
             next($syncIds);

@@ -76,7 +76,7 @@ interface ImportResultInterface
      * @param string|null $entityName
      * @return void
      */
-    public function logValidationMessage($message, int $rowNumber, string $entityName = null);
+    public function logValidationMessage($message, int $rowNumber, ?string $entityName = null);
 
     /**
      * @return array

@@ -168,6 +168,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ENTITY_CODE => 'entity',
                     SourceDataStructure::FIELDS => [],
                     SourceDataStructure::FIELDS_MAP => [],
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => [],
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME
                 ]
@@ -201,6 +202,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ENTITY_CODE => 'entity',
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => [],
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME
                 ]
@@ -234,6 +236,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ENTITY_CODE => 'entity',
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => [$subEntityDataStructureMock],
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME
                 ]
@@ -268,6 +271,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ENTITY_CODE => 'entity',
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => [],
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::MAP => 'entity'
@@ -310,6 +314,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::PARENT_ID_FIELD_NAME => null,
                     SourceDataStructure::MAP => 'sub_entity',
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => []
@@ -341,6 +346,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::PARENT_ID_FIELD_NAME => null,
                     SourceDataStructure::MAP => 'sub_entity_prefix',
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => []
@@ -373,6 +379,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::PARENT_ID_FIELD_NAME => 'sub_entity_id',
                     SourceDataStructure::MAP => 'sub_entity',
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => []
@@ -405,6 +412,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::PARENT_ID_FIELD_NAME => null,
                     SourceDataStructure::MAP => 'sub_entity',
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => []
@@ -436,6 +444,7 @@ class DataStructureBuilderTest extends \PHPUnit\Framework\TestCase
                     SourceDataStructure::ID_FIELD_NAME => self::ID_FIELD_NAME,
                     SourceDataStructure::PARENT_ID_FIELD_NAME => null,
                     SourceDataStructure::MAP => 'sub_entity',
+                    SourceDataStructure::IS_ALLOW_EMPTY => false,
                     SourceDataStructure::FIELDS => ['field'],
                     SourceDataStructure::FIELDS_MAP => ['field' => null],
                     SourceDataStructure::SUB_ENTITY_STRUCTURES => [$subEntityDataStructureMock]

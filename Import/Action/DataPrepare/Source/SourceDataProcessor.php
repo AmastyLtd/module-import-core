@@ -62,7 +62,7 @@ class SourceDataProcessor
             if (isset($row[$key])) {
                 $row[SourceDataStructure::SUB_ENTITIES_DATA_KEY][$key] = [];
                 foreach ($row[$key] as $subIndex => $subEntityRow) {
-                    if ($this->isRowEmpty($subEntityRow)) {
+                    if ($this->isRowEmpty($subEntityRow) && !$subEntityStructure->isAllowEmpty()) {
                         unset($row[SourceDataStructure::SUB_ENTITIES_DATA_KEY][$key][$subIndex]);
                         continue;
                     }

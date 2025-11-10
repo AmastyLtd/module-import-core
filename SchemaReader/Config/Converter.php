@@ -59,6 +59,7 @@ class Converter implements ConverterInterface
                     case 'description':
                         $output[$entityCode][$entityNode->tagName] = $entityNode->nodeValue;
                         break;
+                    case 'allowEmptyImport':
                     case 'isHidden':
                         $output[$entityCode][$entityNode->tagName] = $this->booleanUtils->toBoolean(
                             $entityNode->nodeValue

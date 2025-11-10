@@ -55,7 +55,7 @@ interface ImportProcessInterface extends ExtensibleDataInterface
      * @param string|null $entityCode
      * @return BehaviorResultInterface|BehaviorResultInterface[]|null
      */
-    public function getProcessedEntityResult(string $entityCode = null);
+    public function getProcessedEntityResult(?string $entityCode = null);
 
     /**
      * @return ImportProcessInterface
@@ -110,7 +110,7 @@ interface ImportProcessInterface extends ExtensibleDataInterface
     public function addValidationError(
         string $message,
         int $rowNumber,
-        string $entityName = null
+        ?string $entityName = null
     ): ImportProcessInterface;
 
     /**

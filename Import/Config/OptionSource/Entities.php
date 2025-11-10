@@ -37,7 +37,7 @@ class Entities implements OptionSourceInterface
     public function __construct(
         EntityConfigProvider $entityConfigProvider,
         Hash $hash,
-        DemoEntitiesPool $demoEntitiesPool = null
+        ?DemoEntitiesPool $demoEntitiesPool = null
     ) {
         $this->entityConfigProvider = $entityConfigProvider;
         $this->hash = $hash;

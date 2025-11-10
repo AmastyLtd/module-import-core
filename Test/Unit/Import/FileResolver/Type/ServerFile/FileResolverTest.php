@@ -66,10 +66,13 @@ class FileResolverTest extends TestCase
             Config::class,
             ['getFilename']
         );
-        $profileConfigExtension = $this->createPartialMock(
-            ProfileConfigExtension::class,
-            ['getServerFileResolver']
-        );
+        if (method_exists(ProfileConfigExtension::class, 'getServerFileResolver')) {
+            $profileConfigExtension = $this->createMock(ProfileConfigExtension::class);
+        } else {
+            $profileConfigExtension = $this->getMockBuilder(ProfileConfigExtension::class)
+                ->addMethods(['getServerFileResolver',])
+                ->getMock();
+        }
         $profileConfigExtension->expects($this->any())
             ->method('getServerFileResolver')
             ->willReturn($this->serverFileResolverMock);

@@ -239,7 +239,7 @@ class CreateAttributeValue extends AbstractModifier implements FieldModifierInte
         $optionLabel->setLabel($value);
 
         $option = $this->optionFactory->create();
-        $option->setLabel($optionLabel->getLabel());
+        $option->setLabel($this->getTempLabel($value));
         $option->setStoreLabels([$optionLabel]);
         $option->setSortOrder(0);
         $option->setIsDefault(false);
@@ -249,5 +249,23 @@ class CreateAttributeValue extends AbstractModifier implements FieldModifierInte
             $attribute->getAttributeId(),
             $option
         );
+    }
+
+    /**
+     * Somewhy magento counts labels of option as option id which results as error.
+     * The same validation problem applies for upper/lower-case labels.
+     * Magento allows saving them as different options from admin but not from code.
+     * @see \Magento\Eav\Model\Entity\Attribute\Source\AbstractSource::getOptionId
+     */
+    private function getTempLabel(string $value): string
+    {
+        $lowercaseKeys = array_map('mb_strtolower', array_keys($this->map));
+        $isLowercase = in_array(mb_strtolower($value), $lowercaseKeys, true)
+            && !array_key_exists($value, $this->map);
+        if ($isLowercase || in_array($value, array_values($this->map), false)) {
+            $value .= '_' . uniqid();
+        }
+
+        return $value;
     }
 }

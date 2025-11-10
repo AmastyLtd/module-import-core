@@ -35,7 +35,7 @@ class ResultMerger
         foreach ($secondaryResult->getValidationMessages() as $messageData) {
             $entityName = $messageData['entityName'] ?? null;
             foreach ($messageData['messages'] as $message) {
-                foreach ($messageData['messages']['rowNumber'] as $rowNumber) {
+                foreach ($message['rowNumber'] as $rowNumber) {
                     $primaryResult->logValidationMessage($message['message'], $rowNumber, $entityName);
                 }
             }

@@ -73,10 +73,13 @@ class FileResolverTest extends TestCase
         $uploadFileResolver->expects($this->any())
             ->method('getHash')
             ->willReturn(self::HASH);
-        $profileConfigExtension = $this->createPartialMock(
-            ProfileConfigExtension::class,
-            ['getUploadFileResolver']
-        );
+        if (method_exists(ProfileConfigExtension::class, 'getUploadFileResolver')) {
+            $profileConfigExtension = $this->createMock(ProfileConfigExtension::class);
+        } else {
+            $profileConfigExtension = $this->getMockBuilder(ProfileConfigExtension::class)
+                ->addMethods(['getUploadFileResolver',])
+                ->getMock();
+        }
         $profileConfigExtension->expects($this->any())
             ->method('getUploadFileResolver')
             ->willReturn($uploadFileResolver);

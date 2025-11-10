@@ -10,16 +10,26 @@ declare(strict_types=1);
 
 namespace Amasty\ImportCore\Import\Config;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Module\Manager;
+
 class DemoEntitiesPool
 {
     /**
      * @var DemoEntityConfig[]
      */
-    private $demoEntities;
+    private array $demoEntities;
+
+    /**
+     * @var Manager
+     */
+    private Manager $moduleManager;
 
     public function __construct(
-        array $demoEntities = []
+        array $demoEntities = [],
+        ?Manager $moduleManager = null
     ) {
+        $this->moduleManager = $moduleManager ?? ObjectManager::getInstance()->get(Manager::class);
         $this->initializeDemoEntities($demoEntities);
     }
 
@@ -38,6 +48,13 @@ class DemoEntitiesPool
                 throw new \LogicException(
                     sprintf('Demo Entity must implement %s', DemoEntityConfig::class)
                 );
+            }
+            if (isset($entity['required_modules']) && is_array($entity['required_modules'])) {
+                foreach ($entity['required_modules'] as $module) {
+                    if (!$this->moduleManager->isEnabled($module)) {
+                        unset($demoEntities[$key]);
+                    }
+                }
             }
         }
         $this->demoEntities = $demoEntities;

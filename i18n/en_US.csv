@@ -49,6 +49,7 @@ Plus,Plus
 Truncate,Truncate
 Prepend,Prepend
 "Product SKU To Product ID","Product SKU To Product ID"
+"Product SKUs To Product IDs","Product SKUs To Product IDs"
 Replace,Replace
 "Replace First","Replace First"
 "Store Code to Store Id","Store Code to Store Id"
@@ -67,6 +68,8 @@ Uppercase,Uppercase
 "Select File To Import","Select File To Import"
 "Select the File","Select the File"
 "Make sure your file isn't more than %1M and it is saved in UTF-8 encoding for proper import.","Make sure your file isn't more than %1M and it is saved in UTF-8 encoding for proper import."
+" The file '%1' is missing a file extension."," The file '%1' is missing a file extension."
+"File '%1' was not found or has read restriction.","File '%1' was not found or has read restriction."
 is,is
 "is not","is not"
 "more or equal","more or equal"
@@ -94,8 +97,8 @@ Enabled,Enabled
 "Import Source","Import Source"
 "Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source.","Please note that only certain file types are allowed for different import sources. Options with unavailable file types will be inactive in the file type selection setting for the selected source."
 "Please Select...","Please Select..."
-"Images File Directory","Images File Directory"
-"For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.<br />Please, note that if you import images using links, images are temporarily stored in the Images File Directory during the import process, so this field should be filled in.","For import from file directory please use relative path to Magento installation, e.g. var/import.<br />You can also import images using links. To do this please specify the links to the images in the import file. Please note that when you import an image with the same name that already exists in the system then the image will be updated.<br />Please, note that if you import images using links, images are temporarily stored in the Images File Directory during the import process, so this field should be filled in."
+"Import Files Directory","Import Files Directory"
+"For import from file directory, please use relative path to Magento installation, e.g. var/import.<br/>You can also import files and images using links. To do this, please specify the links to the files in the import file. Please, note that if you import files using links, the files are temporarily stored in the Import Files Directory during the import process, so this field should be filled in.<br/>Please note that when you import an image with the same name that already exists in the system, then the image will be updated.","For import from file directory, please use relative path to Magento installation, e.g. var/import.<br/>You can also import files and images using links. To do this, please specify the links to the files in the import file. Please, note that if you import files using links, the files are temporarily stored in the Import Files Directory during the import process, so this field should be filled in.<br/>Please note that when you import an image with the same name that already exists in the system, then the image will be updated."
 "Wrong file resolver form class: %1","Wrong file resolver form class: %1"
 Filter,Filter
 "Only those fields that are included into mapping can be used for filtering.","Only those fields that are included into mapping can be used for filtering."

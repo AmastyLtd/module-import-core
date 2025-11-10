@@ -25,7 +25,7 @@ class RunJob extends Command
 
     public function __construct(
         Operation\RunJob $runJob,
-        string $name = null
+        ?string $name = null
     ) {
         parent::__construct($name);
         $this->runJob = $runJob;

@@ -6,7 +6,9 @@ define([
         initialize: function () {
             this._super();
             this.inputName = 'file';
-            this.maxFileSize = 2000000;
+            if (this.maxFileSize === false) {
+                this.maxFileSize = 2000000;
+            }
 
             return this;
         },

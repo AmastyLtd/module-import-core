@@ -28,11 +28,6 @@ class Sku2ProductId extends AbstractModifier implements FieldModifierInterface
     private $argumentConverter;
 
     /**
-     * @var MetadataPool
-     */
-    private $metadataPool;
-
-    /**
      * @var ProductResourceModel
      */
     private $resourceModel;
@@ -42,6 +37,11 @@ class Sku2ProductId extends AbstractModifier implements FieldModifierInterface
      */
     private $identity;
 
+    /**
+     * @var array
+     */
+    private $entityToSkuMap = [];
+
     public function __construct(
         $config,
         ArgumentConverter $argumentConverter,
@@ -50,9 +50,8 @@ class Sku2ProductId extends AbstractModifier implements FieldModifierInterface
     ) {
         parent::__construct($config);
         $this->argumentConverter = $argumentConverter;
-        $this->metadataPool = $metadataPool;
         $this->resourceModel = $resourceModel;
-        $this->identity = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+        $this->identity = $metadataPool->getMetadata(ProductInterface::class)->getLinkField();
     }
 
     public function getGroup(): string
@@ -92,12 +91,15 @@ class Sku2ProductId extends AbstractModifier implements FieldModifierInterface
 
     private function getProductIdentityBySku(string $sku, string $identity): ?string
     {
-        $connection = $this->resourceModel->getConnection();
-        $select = $connection->select()->from($this->resourceModel->getEntityTable(), $identity)
-            ->where('sku = :sku');
-        $bind = [':sku' => $sku];
-        $id = (string)$connection->fetchOne($select, $bind);
+        if (!isset($this->entityToSkuMap[$identity][$sku])) {
+            $connection = $this->resourceModel->getConnection();
+            $select = $connection->select()->from($this->resourceModel->getEntityTable(), $identity)
+                ->where('sku = :sku');
+            $bind = [':sku' => $sku];
+            $id = (string)$connection->fetchOne($select, $bind);
+            $this->entityToSkuMap[$identity][$sku] = $id ?: null;
+        }
 
-        return $id ?: null;
+        return $this->entityToSkuMap[$identity][$sku];
     }
 }

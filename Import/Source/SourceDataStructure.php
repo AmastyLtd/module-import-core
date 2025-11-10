@@ -16,6 +16,7 @@ class SourceDataStructure extends DataObject implements SourceDataStructureInter
     public const ID_FIELD_NAME = 'id_field_name';
     public const PARENT_ID_FIELD_NAME = 'parent_id_field_name';
     public const MAP = 'map';
+    public const IS_ALLOW_EMPTY = 'is_allow_empty';
     public const FIELDS = 'fields';
     public const FIELDS_MAP = 'fields_map';
     public const SUB_ENTITY_STRUCTURES = 'sub_entity_structures';
@@ -33,6 +34,11 @@ class SourceDataStructure extends DataObject implements SourceDataStructureInter
     public function getMap()
     {
         return $this->getData(self::MAP);
+    }
+
+    public function isAllowEmpty()
+    {
+        return (bool)$this->getData(self::IS_ALLOW_EMPTY);
     }
 
     public function getFields()

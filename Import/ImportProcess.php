@@ -103,8 +103,8 @@ class ImportProcess implements ImportProcessInterface
         EntityConfigInterface $entityConfig,
         ImportResultInterfaceFactory $importResultFactory,
         string $identity,
-        ImportResultInterface $importResult = null,
-        JobManager $jobManager = null
+        ?ImportResultInterface $importResult = null,
+        ?JobManager $jobManager = null
     ) {
         $this->importResult = $importResult ?? $importResultFactory->create();
         $this->jobManager = $jobManager;
@@ -150,7 +150,7 @@ class ImportProcess implements ImportProcessInterface
      * @param string|null $entityCode
      * @return BehaviorResultInterface[]|null
      */
-    public function getProcessedEntityResult(string $entityCode = null)
+    public function getProcessedEntityResult(?string $entityCode = null)
     {
         if ($entityCode !== null) {
             return $this->processedEntitiesResult[$entityCode] ?? null;
@@ -211,7 +211,7 @@ class ImportProcess implements ImportProcessInterface
     public function addValidationError(
         string $message,
         int $rowNumber,
-        string $entityName = null
+        ?string $entityName = null
     ): ImportProcessInterface {
         $this->getImportResult()->logValidationMessage($message, $rowNumber, $entityName);
 

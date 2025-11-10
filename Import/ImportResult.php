@@ -140,7 +140,7 @@ class ImportResult implements ImportResultInterface
         return $this->messages;
     }
 
-    public function logValidationMessage($message, int $rowNumber, string $entityName = null)
+    public function logValidationMessage($message, int $rowNumber, ?string $entityName = null)
     {
         $this->validationMessages[$entityName]['entityName'] = $entityName;
         $this->validationMessages[$entityName]['messages'][$message]['message'] = $message;

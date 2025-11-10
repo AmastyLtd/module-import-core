@@ -24,6 +24,11 @@ interface SourceDataStructureInterface
     public function getMap();
 
     /**
+     * @return bool
+     */
+    public function isAllowEmpty();
+
+    /**
      * Get input entity field names
      *
      * @return string[]

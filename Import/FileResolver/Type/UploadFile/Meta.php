@@ -63,6 +63,7 @@ class Meta implements FormInterface
                                 . 'and it is saved in UTF-8 encoding for proper import.',
                                 $this->fileSize->getMaxFileSizeInMb()
                             ),
+                            'maxFileSize' => $this->fileSize->getMaxFileSize(),
                             'dataType' => 'text',
                             'validation' => [
                                 'required-entry' => true

@@ -155,7 +155,7 @@ class ProcessRepository
         $this->processResource->save($process);
     }
 
-    public function markAsFailed(string $identity, string $errorMessage = null)
+    public function markAsFailed(string $identity, ?string $errorMessage = null)
     {
         try {
             $process = $this->getByIdentity($identity);
@@ -184,7 +184,7 @@ class ProcessRepository
         $this->processResource->save($process);
     }
 
-    public function initiateProcess(ProfileConfigInterface $profileConfig, string $identity = null): string
+    public function initiateProcess(ProfileConfigInterface $profileConfig, ?string $identity = null): string
     {
         if (empty($identity)) {
             $identity = $this->generateNewIdentity();

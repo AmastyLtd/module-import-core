@@ -35,7 +35,7 @@ class JobWatcher
     public function __construct(
         ProcessRepository $processRepository,
         ImportResultInterfaceFactory $importResultFactory,
-        string $processIdentity = null
+        ?string $processIdentity = null
     ) {
         $this->processIdentity = $processIdentity;
         $this->processRepository = $processRepository;

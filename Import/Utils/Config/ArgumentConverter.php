@@ -51,7 +51,7 @@ class ArgumentConverter
      * @param string|null $xsiType
      * @return ArgumentInterface[]
      */
-    public function valueToArguments($value, string $argName, string $xsiType = null): array
+    public function valueToArguments($value, string $argName, ?string $xsiType = null): array
     {
         if (!$xsiType) {
             $xsiType = $this->getXsiType($value);

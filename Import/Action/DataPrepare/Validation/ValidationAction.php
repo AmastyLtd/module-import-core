@@ -63,7 +63,7 @@ class ValidationAction implements ActionInterface
     public function __construct(
         CompositeValidationProvider $validationProvider,
         DataStructureProvider $dataStructureProvider,
-        TerminateValidator $terminateValidator = null
+        ?TerminateValidator $terminateValidator = null
     ) {
         $this->validationProvider = $validationProvider;
         $this->dataStructureProvider = $dataStructureProvider;

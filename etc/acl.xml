@@ -17,8 +17,8 @@
                     </resource>
                 </resource>
                 <resource id="Magento_Backend::system">
-                    <resource id="Amasty_ImportCore::importcore" title="Amasty Import" sortOrder="091316">
-                        <resource id="Amasty_ImportCore::import" title="Import" translate="title" sortOrder="15"/>
+                    <resource id="Amasty_ImportCore::importcore" title="Amasty Import" sortOrder="15">
+                        <resource id="Amasty_ImportCore::import" title="Import" translate="title" sortOrder="10"/>
                     </resource>
                 </resource>
             </resource>

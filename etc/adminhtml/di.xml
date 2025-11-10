@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Import Core for Magento 2 (System)
+ */-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- import entities promo start -->
+    <virtualType name="AmastySharedCatalogImport" type="Amasty\ImportCore\Import\Config\DemoEntityConfig">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="entity_code" xsi:type="string">shared_catalog</item>
+                <item name="name" xsi:type="string">Shared Catalog</item>
+                <item name="group" xsi:type="string">Shared Catalog</item>
+                <item name="is_hidden_in_lists" xsi:type="boolean">false</item>
+                <item name="additional_data" xsi:type="array">
+                    <item name="promoLink" xsi:type="string">https://amasty.com/amcustomer/account/products/?utm_source=extension&amp;utm_medium=backend&amp;utm_campaign=importexport</item>
+                </item>
+                <item name="required_modules" xsi:type="array">
+                    <item name="magento_shared_catalog" xsi:type="string">Magento_SharedCatalog</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AmastySharedCatalogProductItemImport" type="Amasty\ImportCore\Import\Config\DemoEntityConfig">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="entity_code" xsi:type="string">shared_catalog_product_item</item>
+                <item name="name" xsi:type="string">Shared Catalog Product Item</item>
+                <item name="group" xsi:type="string">Shared Catalog</item>
+                <item name="is_hidden_in_lists" xsi:type="boolean">false</item>
+                <item name="additional_data" xsi:type="array">
+                    <item name="promoLink" xsi:type="string">https://amasty.com/amcustomer/account/products/?utm_source=extension&amp;utm_medium=backend&amp;utm_campaign=importexport</item>
+                </item>
+                <item name="required_modules" xsi:type="array">
+                    <item name="magento_shared_catalog" xsi:type="string">Magento_SharedCatalog</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Amasty\ImportCore\Import\Config\DemoEntitiesPool">
+        <arguments>
+            <argument name="demoEntities" xsi:type="array">
+                <item name="shared_catalog" xsi:type="object">AmastySharedCatalogImport</item>
+                <item name="shared_catalog_product_item" xsi:type="object">AmastySharedCatalogProductItemImport</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- import entities promo end -->
+</config>

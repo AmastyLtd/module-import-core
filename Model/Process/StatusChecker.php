@@ -48,7 +48,7 @@ class StatusChecker implements StatusCheckerInterface
         JobManager $jobManager,
         ProcessStatusInterfaceFactory $processStatusFactory,
         ProcessRepository $processRepository,
-        ConfigProvider $configProvider = null
+        ?ConfigProvider $configProvider = null
     ) {
         $this->jobManager = $jobManager;
         $this->processStatusFactory = $processStatusFactory;
